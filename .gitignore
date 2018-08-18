@@ -1,0 +1,15 @@
+.classpath
+.project
+.idea/
+.settings/
+*.iml
+
+.DS_Store
+*/.settings/
+**/target/
+**/logs/
+**/log/
+bin/
+dist/
+.DS_Store
+.npm-debug
