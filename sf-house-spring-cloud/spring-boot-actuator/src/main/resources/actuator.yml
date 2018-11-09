@@ -1,0 +1,38 @@
+
+# 如果加入了 security 依赖，则所有的接口默认都需要被验证
+security:
+  basic:
+    enabled: true
+    #针对/admin路径进行认证
+    path: /admin
+  user:
+    #认证使用的用户名
+    name: admin
+    #认证使用的密码
+    password: admin
+
+management:
+  # 暴露接口使用的端口，为了和api接口使用的端口进行分离
+  port: 11111
+  # 暴露接口的前缀
+  context-path: /admin
+  security:
+    roles: SUPERUSER
+    # 是否需要安全保证，默认需要
+    enabled: true
+  # 默认全部启用并暴露
+  endpoints:
+    enabled-by-default: true
+    web:
+      expose: '*'
+  endpoint:
+    health:
+      show-details: always
+
+# 对安全保证配置不敏感
+endpoints:
+  health:
+    sensitive: false
+  beans:
+    sensitive: false
+

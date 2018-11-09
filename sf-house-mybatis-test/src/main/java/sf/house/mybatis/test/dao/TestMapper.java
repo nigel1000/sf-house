@@ -1,6 +1,6 @@
 package sf.house.mybatis.test.dao;
 
-import sf.house.bean.base.BaseMapper;
+import sf.house.mybatis.dao.BaseMapper;
 import sf.house.mybatis.test.domain.Test;
 
 /**

@@ -1,13 +1,13 @@
 package sf.house.bean.excps;
 
 import lombok.Data;
+import sf.house.bean.excps.base.CommonError;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 统一可抛出的异常定义
- * Created by nijianfeng on 2018/8/14.
+ * 统一可抛出的异常定义 Created by nijianfeng on 2018/8/14.
  */
 
 @Data
@@ -19,7 +19,10 @@ public class UnifiedException extends RuntimeException {
      * 业务模块
      */
     private String module;
-
+    /**
+     * 错误编码
+     */
+    private int errorCode;
     /**
      * 自定义信息回现
      */
@@ -30,6 +33,14 @@ public class UnifiedException extends RuntimeException {
      */
     private Map<String, Object> context;
 
+    public static UnifiedException gen(String errorMessage) {
+        return gen("default", errorMessage);
+    }
+
+    public static UnifiedException gen(String errorMessage, Throwable cause) {
+        return gen("default", errorMessage, cause);
+    }
+
     public static UnifiedException gen(String module, String errorMessage) {
         return new UnifiedException(module, errorMessage);
     }
@@ -38,14 +49,40 @@ public class UnifiedException extends RuntimeException {
         return new UnifiedException(module, errorMessage, cause);
     }
 
+    public static UnifiedException gen(int errorCode, String errorMessage) {
+        return gen("default", errorCode, errorMessage);
+    }
+
+    public static UnifiedException gen(int errorCode, String errorMessage, Throwable cause) {
+        return gen("default", errorCode, errorMessage, cause);
+    }
+
+    public static UnifiedException gen(String module, int errorCode, String errorMessage) {
+        return new UnifiedException(module, errorCode, errorMessage);
+    }
+
+    public static UnifiedException gen(String module, int errorCode, String errorMessage, Throwable cause) {
+        return new UnifiedException(module, errorCode, errorMessage, cause);
+    }
+
     private UnifiedException(String module, String errorMessage) {
+        this(module, CommonError.SYSTEM_ERROR.getErrorCode(), errorMessage);
+    }
+
+    private UnifiedException(String module, String errorMessage, Throwable cause) {
+        this(module, CommonError.SYSTEM_ERROR.getErrorCode(), errorMessage, cause);
+    }
+
+    private UnifiedException(String module, int errorCode, String errorMessage) {
         super(errorMessage);
+        this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.module = module;
     }
 
-    private UnifiedException(String module, String errorMessage, Throwable cause) {
+    private UnifiedException(String module, int errorCode, String errorMessage, Throwable cause) {
         super(errorMessage, cause);
+        this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.module = module;
     }

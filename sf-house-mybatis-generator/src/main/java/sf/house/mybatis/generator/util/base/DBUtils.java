@@ -1,7 +1,7 @@
 package sf.house.mybatis.generator.util.base;
 
 
-import sf.house.mybatis.generator.exps.AutoCodeException;
+import sf.house.bean.excps.UnifiedException;
 import sf.house.mybatis.generator.model.Table;
 import sf.house.mybatis.generator.util.Constants;
 
@@ -28,7 +28,7 @@ public abstract class DBUtils {
             return conn;
         } catch (Exception e) {
             String message = "get db connection failed.";
-            throw AutoCodeException.valueOf(message);
+            throw UnifiedException.gen(message);
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class DBUtils {
                 rs = null;
             } catch (SQLException e) {
                 String message = "close rs failed.";
-                throw AutoCodeException.valueOf(message);
+                throw UnifiedException.gen(message);
             }
         }
         // 关闭声明
@@ -54,7 +54,7 @@ public abstract class DBUtils {
                 ps = null;
             } catch (SQLException e) {
                 String message = "close ps failed.";
-                throw AutoCodeException.valueOf(message);
+                throw UnifiedException.gen(message);
             }
         }
         // 关闭链接对象
@@ -64,7 +64,7 @@ public abstract class DBUtils {
                 conn = null;
             } catch (SQLException e) {
                 String message = "close conn failed.";
-                throw AutoCodeException.valueOf(message);
+                throw UnifiedException.gen(message);
             }
         }
     }

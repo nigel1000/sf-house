@@ -1,8 +1,8 @@
 package sf.house.excel.vo;
 
-import sf.house.excel.ExcelField;
-import sf.house.excel.enums.ExcelBool;
 import lombok.Data;
+import sf.house.excel.annotations.ExcelParseField;
+import sf.house.excel.enums.ExcelBool;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,16 +16,16 @@ import java.util.Date;
 public class ReaderSheetVO implements Serializable {
     private static final long serialVersionUID = 2673802046675941279L;
 
-    @ExcelField(cellIndex = 0, title = "属性1", required = false, desc = "字符串")
+    @ExcelParseField(cellIndex = 0, title = "属性1", required = false, desc = "字符串")
     private String attr1;
-    @ExcelField(cellIndex = 1, title = "属性2", required = false, desc = "Integer")
+    @ExcelParseField(cellIndex = 1, title = "属性2", required = false, desc = "Integer")
     private Integer attr2;
-    @ExcelField(cellIndex = 2, title = "属性3", required = false, desc = "Long")
+    @ExcelParseField(cellIndex = 2, title = "属性3", required = false, desc = "Long")
     private Long attr3;
-    @ExcelField(cellIndex = 3, title = "属性4", required = false, desc = "BigDecimal")
+    @ExcelParseField(cellIndex = 3, title = "属性4", required = false, desc = "BigDecimal")
     private BigDecimal attr4;
-    @ExcelField(cellIndex = 4, title = "属性5", required = false, desc = "范围类型")
+    @ExcelParseField(cellIndex = 4, title = "属性5", required = false, desc = "范围类型")
     private ExcelBool bool;
-    @ExcelField(cellIndex = 5,  title = "属性6", required = false, desc = "日期类型", dateParse = "yyyy-MM-dd HH:mm:ss")
+    @ExcelParseField(cellIndex = 5, title = "属性6", required = false, desc = "日期类型", dateParse = "yyyy-MM-dd HH:mm:ss")
     private Date date;
 }

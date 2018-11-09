@@ -8,8 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Created by hznijianfeng on 2018/08/16.
- * 测试表
+ * Created by hznijianfeng on 2018/08/16. 测试表
  */
 
 @Data
@@ -98,5 +97,22 @@ public class Test implements Serializable {
      */
     private Date updateAt;
 
+    public static Test gen() {
+        Test test = new Test();
+        test.setBigintType(1L);
+        test.setBitType(Boolean.FALSE);
+        test.setCharType("char");
+        test.setDatetimeType(new Date());
+        test.setDateType(new Date());
+        test.setDecimalType(new BigDecimal(1));
+        test.setDoubleType(new BigDecimal("11.11"));
+        test.setIntType(3);
+        test.setMediumintType(23L);
+        test.setMediumtextType("你好");
+        test.setSmallintType(23);
+        test.setStringType("测试");
+        test.setTinyintType(3);
+        return test;
+    }
 
 }

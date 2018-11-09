@@ -4,15 +4,17 @@ package sf.house.excel.base;
  * Created by hznijianfeng on 2018/8/14.
  */
 
-public interface BaseEnum<T extends BaseEnum>{
+public interface BaseEnum {
 
-    T getEnumByDesc(String descValue);
+    BaseEnum getEnumByDesc(String descValue);
+
+    String getAllDesc();
 
     default String getDesc() {
-        return "NULL";
+        return Constants.ENUM_ILLEGAL_DESC_NULL;
     }
 
-    default int getValue() {
+    default Integer getValue() {
         return -1;
     }
 

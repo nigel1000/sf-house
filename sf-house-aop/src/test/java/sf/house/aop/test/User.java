@@ -12,7 +12,7 @@ public class User {
     private Long id;
     private String name;
 
-    public static User getInstance(){
+    public static User getInstance() {
         User user = new User();
         user.setId(11L);
         user.setName("测试");

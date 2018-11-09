@@ -1,0 +1,34 @@
+
+#设置tomcat服务端口号
+server:
+  port: 1111
+
+#设置服务名称
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  instance:
+    hostname: localhost
+    # 默认使用主机名，配置使用IP地址
+    #prefer-ip-address: true
+    #强制指定IP地址，默认会获取本机的IP地址
+    #ip-address: 127.0.0.1
+    # 服务续约任务调用间隔时间
+    lease-renewal-interval-in-seconds: 2
+    # 服务失效时间
+    lease-expiration-duration-in-seconds: 10
+  client:
+    #注册中心不需要注册自己
+    register-with-eureka: false
+    #注册中心不需要去发现服务
+    fetch-registry: false
+    # 缓存清单更新时间
+    registry-fetch-interval-seconds: 10
+    #设置服务注册中心的URL
+    serviceUrl:
+      defaultZone: http://localhost:1111/eureka
+  server:
+    # 关闭自我保护 15分钟内心跳失败等比例低于85%时，服务会把当前的注册信息保护起来同时也会导致客户端拿到不存在的实例
+    enable-self-preservation: false

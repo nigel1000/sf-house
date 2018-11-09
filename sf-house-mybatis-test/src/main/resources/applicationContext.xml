@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/jee
+            http://www.springframework.org/schema/jee/spring-jee.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+        ">
 
-    <context:component-scan base-package="sf.house.mybatis.test"/>
+    <!-- 启动@AspectJ支持 -->
+    <aop:aspectj-autoproxy/>
+
+    <context:component-scan base-package="sf.house"/>
 
     <!-- 引入db.properties -->
     <context:property-placeholder location="classpath:db.properties"/>
@@ -20,7 +34,7 @@
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="driverClassName" value="${driver}"/>
         <property name="url" value="${url}"/>
-        <property name="username" value="${username}"/>
+        <property name="username" value="${name}"/>
         <property name="password" value="${password}"/>
 
         <!-- 配置初始化大小、最小、最大 -->
@@ -74,10 +88,13 @@
     <!--<constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>-->
     <!--</bean>-->
 
+
     <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    <!-- 开启spring对事务的注解支持 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" order="1"/>
 
     <!-- scan for mappers and let them be autowired -->
     <bean id="rdsMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">

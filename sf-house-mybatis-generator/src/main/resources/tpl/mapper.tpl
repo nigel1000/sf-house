@@ -9,68 +9,83 @@
     <!--</resultMap>-->
 
     <sql id="tb">
-       ${tableName}
+       `${tableName}`
     </sql>
 
     <sql id="cols_all">
     <#list mapperVos as vo>
-       ${vo.dbName}<#if vo_has_next>,</#if>
+        `${vo.dbName}`<#if vo_has_next>,</#if>
     </#list>
     </sql>
 
-    <sql id="vals">
+    <sql id="vals_all">
     <#list mapperVos as vo>
-    <#if vo.javaName == 'id'>
-        <if test="id != null ">${"#"}{id},</if>
-        <if test="id == null ">null,</if>
-    <#else>
-        <#if dateNowValList?seq_contains(vo.javaName)>now()<#else>${"#"}{${vo.javaName}}</#if><#if vo_has_next>,</#if>
-    </#if>
+        <#if dateNowValList?seq_contains(vo.javaName)>
+        now()<#if vo_has_next>,</#if>
+        <#else>
+        <#if vo.javaName == 'id'>
+        <if test="item.id != null ">${"#"}{item.id}<#if vo_has_next>,</#if></if>
+        <if test="item.id == null ">null<#if vo_has_next>,</#if></if>
+        <#else>
+        ${"#"}{item.${vo.javaName}}<#if vo_has_next>,</#if>
+        </#if>
+        </#if>
     </#list>
     </sql>
 
-    <sql id="vals_list">
-        (
+    <sql id="cols_dynamic">
     <#list mapperVos as vo>
-    <#if vo.javaName == 'id'>
-        <if test="item.id != null ">${"#"}{item.id},</if>
-        <if test="item.id == null ">null,</if>
-    <#else>
-        <#if dateNowValList?seq_contains(vo.javaName)>now()<#else>${"#"}{item.${vo.javaName}}</#if><#if vo_has_next>,</#if>
-    </#if>
+        <#if dateNowValList?seq_contains(vo.javaName)>
+        `${vo.dbName}`<#if vo_has_next>,</#if>
+        <#else>
+            <#if vo.javaName == 'id'>
+        `id`<#if vo_has_next>,</#if>
+            <#else>
+        <if test="item.${vo.javaName} != null ">`${vo.dbName}`<#if vo_has_next>,</#if></if>
+            </#if>
+        </#if>
     </#list>
-        )
     </sql>
 
-    <sql id="dynamic_condition">
+    <sql id="vals_dynamic">
+    <#list mapperVos as vo>
+        <#if vo.javaName == 'id'>
+        <if test="item.id != null ">${"#"}{item.id}<#if vo_has_next>,</#if></if>
+        <if test="item.id == null ">null<#if vo_has_next>,</#if></if>
+        <#else>
+        <if test="item.${vo.javaName} != null ">${"#"}{item.${vo.javaName}}<#if vo_has_next>,</#if></if>
+        </#if>
+        <#if dateNowValList?seq_contains(vo.javaName)>
+        <if test="item.${vo.javaName} == null ">now()<#if vo_has_next>,</#if></if>
+        </#if>
+    </#list>
+    </sql>
+
+    <sql id="condition_dynamic">
     <#list mapperVos as vo>
     <#if dynamicCondList?seq_contains(vo.javaName)>
     <#else>
-        <if test="${vo.javaName} != null ">and ${vo.dbName} = ${"#"}{${vo.javaName}}</if>
+        <if test="item.${vo.javaName} != null ">and `${vo.dbName}` = ${"#"}{item.${vo.javaName}}</if>
     </#if>
     </#list>
     </sql>
 
-    <sql id="set">
+    <sql id="set_dynamic">
     <#list mapperVos as vo>
     <#if dynamicCondList?seq_contains(vo.javaName)>
     <#else>
-        <if test="${vo.javaName} !=null">${vo.dbName} = ${"#"}{${vo.javaName}},</if>
+        <if test="item.${vo.javaName} !=null">`${vo.dbName}` = ${"#"}{item.${vo.javaName}},</if>
     </#if>
     </#list>
     </sql>
 
     <#if mapperIdList?seq_contains("create")>
-    <insert id="create" parameterType="${domainPackage}.${className}" keyProperty="id" useGeneratedKeys="true">
+    <insert id="create" parameterType="${domainPackage}.${className}" keyProperty="item.id" useGeneratedKeys="true">
         INSERT INTO
         <include refid="tb"/>
-        (
-        <include refid="cols_all"/>
-        )
+        (<include refid="cols_dynamic"/>)
         VALUES
-        (
-        <include refid="vals"/>
-        )
+        (<include refid="vals_dynamic"/>)
     </insert>
     </#if>
     <#if mapperIdList?seq_contains("creates")>
@@ -78,12 +93,10 @@
     <insert id="creates" parameterType="list">
         INSERT INTO
         <include refid="tb"/>
-        (
-        <include refid="cols_all"/>
-        )
+        (<include refid="cols_all"/>)
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
-            <include refid="vals_list"/>
+            (<include refid="vals_all"/>)
         </foreach>
     </insert>
     </#if>
@@ -93,9 +106,9 @@
         UPDATE
         <include refid="tb"/>
         <set>
-            <include refid="set"/>
+            <include refid="set_dynamic"/>
         </set>
-        WHERE id=${"#"}{id}
+        WHERE id=${"#"}{item.id}
     </update>
     </#if>
     <#if mapperIdList?seq_contains("list")>
@@ -106,7 +119,7 @@
         FROM
         <include refid="tb"/>
         <where>
-            <include refid="dynamic_condition"/>
+            <include refid="condition_dynamic"/>
         </where>
     </select>
     </#if>
@@ -118,21 +131,21 @@
         FROM
         <include refid="tb"/>
         <where>
-            <include refid="dynamic_condition"/>
+            <include refid="condition_dynamic"/>
         </where>
-        <if test="orderBy != null">order by ${"#"}{orderBy}</if>
-        <if test="offset != null and limit != null">limit ${"#"}{offset}, ${"#"}{limit}</if>
+        <if test="item.sortBy != null">order by ${"$"}{item.sortBy}</if>
+        <if test="item.offset != null and item.limit != null">limit ${"#"}{item.offset}, ${"#"}{item.limit}</if>
     </select>
     </#if>
     <#if mapperIdList?seq_contains("count")>
 
-    <select id="count" parameterType="map" resultType="long">
+    <select id="count" parameterType="map" resultType="int">
         SELECT
         count(*)
         FROM
         <include refid="tb"/>
         <where>
-            <include refid="dynamic_condition"/>
+            <include refid="condition_dynamic"/>
         </where>
     </select>
     </#if>
@@ -143,7 +156,7 @@
         <include refid="cols_all"/>
         FROM
         <include refid="tb"/>
-        WHERE id = ${"#"}{id}
+        WHERE id = ${"#"}{item.id}
     </select>
     </#if>
     <#if mapperIdList?seq_contains("loads")>
@@ -154,8 +167,8 @@
         FROM
         <include refid="tb"/>
         WHERE id IN
-        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
-            ${"#"}{item}
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            ${"#"}{id}
         </foreach>
     </select>
    </#if>
@@ -164,7 +177,7 @@
     <delete id="delete" parameterType="long">
         DELETE FROM
         <include refid="tb"/>
-        WHERE id = ${"#"}{id}
+        WHERE id = ${"#"}{item.id}
     </delete>
     </#if>
     <#if mapperIdList?seq_contains("deletes")>

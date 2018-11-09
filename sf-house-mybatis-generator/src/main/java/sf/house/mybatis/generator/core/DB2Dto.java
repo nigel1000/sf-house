@@ -3,8 +3,11 @@ package sf.house.mybatis.generator.core;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import sf.house.bean.util.ConvertUtil;
 import sf.house.mybatis.generator.model.ClassVo;
+import sf.house.mybatis.generator.model.FileVo;
 import sf.house.mybatis.generator.model.Table;
 import sf.house.mybatis.generator.util.*;
 import sf.house.mybatis.generator.util.base.DBUtils;
@@ -15,6 +18,8 @@ import java.util.Map;
 /**
  * Created by nijianfeng on 18/1/29.
  */
+
+@Slf4j
 public class DB2Dto {
 
     private DBUtils dbUtils = new MySqlUtils();
@@ -39,9 +44,10 @@ public class DB2Dto {
         }
     }
 
-    public synchronized void genDto() {
+    public synchronized List<FileVo> genDto() {
+        List<FileVo> fileVos = Lists.newArrayList();
         if (!needGen) {
-            return;
+            return fileVos;
         }
         List<String> nameList = Splitter.on(",").omitEmptyStrings().trimResults().splitToList(tableNames);
         if (nameList.contains("all")) {
@@ -53,26 +59,27 @@ public class DB2Dto {
             tplMap.put("author", Constants.author);
             tplMap.put("currentDate", Constants.currentDate);
             tplMap.put("dtoPackage", dtoPackage);
-            String className =
-                    NameUtils.firstUpper(NameUtils.ruleConvert(t, Constants.dbNameRule, Constants.javaNameRule));
+            String className = ConvertUtil.firstUpper(ConvertUtil.underline2Camel(t));
             tplMap.put("className", className + "Dto");
             tplMap.put("tableComment", table.getComment());
             List<ClassVo> classVos = Lists.newArrayList();
             table.getFields().forEach(f -> {
                 ClassVo classVo = new ClassVo();
-                classVo.setName(NameUtils
-                        .firstLower(NameUtils.ruleConvert(f.getField(), Constants.dbNameRule, Constants.javaNameRule)));
+                classVo.setName(ConvertUtil.firstLower(ConvertUtil.underline2Camel(f.getField())));
                 classVo.setMemo(f.getMemo());
                 classVo.setType(Constants.typeMap.get(f.getType()));
                 classVos.add(classVo);
             });
             tplMap.put("classVos", classVos);
-            System.out.println(className + "Dto.java file template map:");
-            System.out.println(tplMap);
-            FileUtils.genFile(dtoPath + "/dto/" + className + "Dto.java",
-                    TemplateUtils.genTemplate("classpath:tpl/", "dto.tpl", tplMap));
+            log.info(className + "Dto.java file template map:");
+            log.info("{}", tplMap);
+            String filePath = dtoPath + "/dto/" + className + "Dto.java";
+            String fileName = className + "Dto.java";
+            String fileContent = TemplateUtils.genTemplate("dto.tpl", tplMap);
+            fileVos.add(new FileVo(filePath, fileName, fileContent));
+            FileUtils.genFile(filePath, fileContent);
         }
-        DBUtils.closeConn();
+        return fileVos;
     }
 
 }

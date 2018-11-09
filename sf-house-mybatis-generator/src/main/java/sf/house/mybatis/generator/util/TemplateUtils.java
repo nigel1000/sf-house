@@ -2,8 +2,7 @@ package sf.house.mybatis.generator.util;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.springframework.util.ResourceUtils;
-import sf.house.mybatis.generator.exps.AutoCodeException;
+import sf.house.bean.excps.UnifiedException;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -17,12 +16,12 @@ import java.util.Map;
  */
 public class TemplateUtils {
 
-    public static String genTemplate(String dir, String file, Map<String, Object> map) {
+    public static String genTemplate(String file, Map<String, Object> map) {
         try {
             // 获取文档模板
             Configuration configuration = new Configuration(Configuration.VERSION_2_3_22);
             configuration.setDefaultEncoding("UTF-8");
-            configuration.setDirectoryForTemplateLoading(ResourceUtils.getFile(dir + file).getParentFile());
+            configuration.setClassForTemplateLoading(TemplateUtils.class, "/tpl");
             Template template = configuration.getTemplate(file);
             // 填充模板生成输出流
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -32,9 +31,8 @@ public class TemplateUtils {
             out.flush();
             return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
         } catch (Exception e) {
-            throw AutoCodeException.valueOf("模版生成有问题!", e);
+            throw UnifiedException.gen("模版生成有问题!", e);
         }
-
     }
 
 

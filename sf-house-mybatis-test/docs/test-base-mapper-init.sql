@@ -1,3 +1,4 @@
+
 drop database if exists `test_base_mapper`;
 create database test_base_mapper;
 

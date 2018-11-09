@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import sf.house.aop.annotation.CatchExcp;
 import sf.house.aop.annotation.EasyLog;
-import sf.house.bean.beans.RpcResponse;
+import sf.house.bean.beans.Response;
 import sf.house.bean.excps.UnifiedException;
 
 /**
@@ -22,14 +22,14 @@ public class UserDao {
     }
 
     @CatchExcp(module = "获取异常")
-    public RpcResponse<User> getUser(boolean isNeedExcp) {
+    public Response<User> getUser(boolean isNeedExcp) {
         log.info("get user ... ");
         if (isNeedExcp) {
             UnifiedException excp = UnifiedException.gen("用户模块", "我抛出了异常！");
             excp.addContext("test", User.getInstance());
             throw excp;
         }
-        return RpcResponse.ok(User.getInstance());
+        return Response.ok(User.getInstance());
     }
 
 }

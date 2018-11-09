@@ -1,0 +1,21 @@
+
+#设置tomcat服务端口号
+server:
+  port: 1111
+
+#设置服务名称
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  instance:
+    hostname: localhost1
+  client:
+    #注册中心不需要注册自己
+    register-with-eureka: true
+    #注册中心不需要去发现服务
+    fetch-registry: true
+    #设置服务注册中心的URL
+    serviceUrl:
+      defaultZone: http://localhost2:1112/eureka,http://localhost3:1113/eureka

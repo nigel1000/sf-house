@@ -1,0 +1,11 @@
+#!/usr/bin/expect  -f
+
+# 免输密码进行远程脚本执行
+expect -c "
+set timeout -1;
+spawn -noecho ssh -o StrictHostKeyChecking=no -p [lindex $argv 1] [lindex $argv 0] \"[lindex $argv 2]\";
+expect \"*password:\";
+send \"${passwd}\r\";
+expect eof;
+"
+

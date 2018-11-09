@@ -7,13 +7,23 @@
     <groupId>sf.house</groupId>
     <artifactId>sf-house</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>404.0.0-SNAPSHOT</version>
     <modules>
         <module>sf-house-bean</module>
         <module>sf-house-excel</module>
         <module>sf-house-aop</module>
         <module>sf-house-mybatis-generator</module>
         <module>sf-house-mybatis-test</module>
+        <module>sf-house-mybatis-dao</module>
+        <module>sf-house-redis</module>
+        <module>sf-house-model</module>
+        <module>sf-house-trace-common</module>
+        <module>sf-house-trace-web</module>
+        <module>sf-house-trace-dubbo</module>
+        <module>sf-house-project-web</module>
+        <module>sf-house-project-service</module>
+        <module>sf-house-project-api</module>
+        <module>sf-house-spring-cloud</module>
     </modules>
 
     <!--变量管理-->
@@ -22,32 +32,113 @@
         <java.version>1.8</java.version>
         <!--Java扩展类库依赖-->
         <lombok.version>1.16.20</lombok.version>
+        <servlet.version>2.5</servlet.version>
         <guava.version>18.0</guava.version>
         <slf4j.version>1.7.21</slf4j.version>
-        <logback.version>logback</logback.version>
         <fastjson.version>1.2.28</fastjson.version>
         <commons-lang3.version>3.3.1</commons-lang3.version>
         <commons-beanutils.version>1.8.0</commons-beanutils.version>
         <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
+        <hession.version>4.0.38</hession.version>
+        <!--dubbo-->
+        <dubbo.version>2.5.5</dubbo.version>
         <!--spring 依赖-->
-        <spring.version>4.1.7.RELEASE</spring.version>
+        <spring.version>4.3.10.RELEASE</spring.version>
         <aspectj.version>1.7.1</aspectj.version>
         <!--数据库 依赖-->
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
         <mybatis.version>3.4.1</mybatis.version>
         <mybatis-spring.version>1.3.0</mybatis-spring.version>
         <druid.version>1.0.28</druid.version>
+        <!--缓存-->
+        <redis-clients.version>2.9.0</redis-clients.version>
         <!--EXCEL 依赖-->
-        <poi.version>3.12</poi.version>
+        <poi.version>3.17</poi.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- spring boot 依赖管理 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.5.6.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--自身依赖-->
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-aop</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-bean</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-excel</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-mybatis-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-mybatis-generator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-mybatis-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-trace-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-trace-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-trace-dubbo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-project-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!--Java扩展类库依赖-->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -59,7 +150,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -85,6 +175,36 @@
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>${commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.caucho</groupId>
+                <artifactId>hessian</artifactId>
+                <version>${hession.version}</version>
+            </dependency>
+            <!--dubbo 依赖-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!--spring 依赖-->
             <dependency>
@@ -153,6 +273,12 @@
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
             </dependency>
+            <!--缓存-->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${redis-clients.version}</version>
+            </dependency>
             <!-- excel表格 POI -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
@@ -179,6 +305,10 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -191,81 +321,116 @@
     <distributionManagement>
         <repository>
             <id>libs-releases</id>
-            <name>Netease Maven Repository</name>
+            <name>Netease Maven Releases</name>
             <url>http://mvn.hz.netease.com/artifactory/libs-releases</url>
         </repository>
 
         <snapshotRepository>
             <id>libs-snapshots</id>
-            <name>Netease Maven Repository</name>
+            <name>Netease Maven Snapshots</name>
             <url>http://mvn.hz.netease.com/artifactory/libs-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
     <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <showWarnings>false</showWarnings>
+                        <showDeprecation>false</showDeprecation>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                    <configuration>
+                        <nonFilteredFileExtensions>
+                            <nonFilteredFileExtension>perm</nonFilteredFileExtension>
+                        </nonFilteredFileExtensions>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.19.1</version>
+                    <configuration>
+                        <skip>true</skip>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                        <excludes>
+                            <exclude>**/ignore/*.java</exclude>
+                        </excludes>
+                        <testFailureIgnore>true</testFailureIgnore>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.1</version>
+                    <configuration>
+                        <reportOutputDirectory>docs</reportOutputDirectory>
+                        <aggregate>true</aggregate>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>1.5.6.RELEASE</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <showWarnings>false</showWarnings>
-                    <showDeprecation>false</showDeprecation>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <nonFilteredFileExtensions>
-                        <nonFilteredFileExtension>perm</nonFilteredFileExtension>
-                    </nonFilteredFileExtensions>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <skip>true</skip>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                    <excludes>
-                        <exclude>**/ignore/*.java</exclude>
-                    </excludes>
-                    <testFailureIgnore>true</testFailureIgnore>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
-                <configuration>
-                    <reportOutputDirectory>docs</reportOutputDirectory>
-                    <aggregate>true</aggregate>
-                </configuration>
             </plugin>
         </plugins>
     </build>

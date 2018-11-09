@@ -15,30 +15,30 @@ public enum YesNoEnum {
     NO(0, Boolean.FALSE, "否"),;
 
     @Getter
-    private int code;
+    private Integer code;
     @Getter
     private Boolean isYes;
     @Getter
     private String desc;
 
-    YesNoEnum(int code, Boolean isYes, String desc) {
+    YesNoEnum(Integer code, Boolean isYes, String desc) {
         this.code = code;
         this.isYes = isYes;
         this.desc = desc;
     }
 
-    public boolean isEqual(int code) {
-        return this.getCode() == code;
+    public boolean isEqual(Integer code) {
+        return this.getCode().equals(code);
     }
 
-    public static boolean isAvailable(int code) {
+    public static boolean isAvailable(Integer code) {
         return !parseCode(code).equals(NULL);
     }
 
-    public static YesNoEnum parseCode(int code) {
+    public static YesNoEnum parseCode(Integer code) {
 
         for (YesNoEnum item : YesNoEnum.values()) {
-            if (item.getCode() == code)
+            if (item.getCode().equals(code))
                 return item;
         }
         return NULL;

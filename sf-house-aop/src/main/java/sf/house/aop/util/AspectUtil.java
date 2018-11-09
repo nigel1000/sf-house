@@ -5,6 +5,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.util.StringUtils;
+import sf.house.bean.util.TypeUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -13,7 +14,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by hznijianfeng on 2018/8/14.
@@ -22,43 +22,41 @@ import java.util.Optional;
 @Slf4j
 public class AspectUtil {
 
-    private AspectUtil() {}
+    private AspectUtil() {
+    }
 
     /**
-     * 方法上优先 类上次之
-     * 
-     * @param point
-     * @param annotationClass
-     * @param <T>
-     * @return
+     * 递归查找目标类的所有子类的注解
+     * 方法上优先，类上次之，找到即返回
      */
     public static <T extends Annotation> T getAnnotation(final JoinPoint point, Class<T> annotationClass) {
 
         if (point == null) {
             return null;
         }
+        T result = null;
         String methodName = point.getSignature().getName();
-        Class<?> clazz = point.getTarget().getClass();
         Class[] parameterTypes = ((MethodSignature) point.getSignature()).getParameterTypes();
-        // 必须用这种方式获得method
-        // ((MethodSignature) pjp.getSignature()).getMethod() 无法通过接口拿到实现类方法上的注解
-        Method method = null;
-        try {
-            method = clazz.getMethod(methodName, parameterTypes);
-        } catch (NoSuchMethodException ignored) {
+        List<Class> clazzs = TypeUtil.getAllSuperclass(point.getTarget().getClass());
+        for (Class<?> clazz : clazzs) {
+            // ((MethodSignature) pjp.getSignature()).getMethod() 无法通过接口拿到实现类方法上的注解
+            try {
+                Method method = clazz.getMethod(methodName, parameterTypes);
+                result = method.getAnnotation(annotationClass);
+            } catch (NoSuchMethodException ignored) {
+            }
+            if (result == null) {
+                result = clazz.getAnnotation(annotationClass);
+            }
+            if (result != null) {
+                return result;
+            }
         }
-        if (method == null) {
-            return null;
-        }
-        return Optional.ofNullable(method.getAnnotation(annotationClass)).orElse(clazz.getAnnotation(annotationClass));
+        return result;
     }
 
     /**
      * 替换注解的值
-     * 
-     * @param packagePaths
-     * @param methodName
-     * @return
      */
     public static void genExecutionString(List<String> packagePaths, Class<?> clazz, String methodName) {
         StringBuilder sb = new StringBuilder();

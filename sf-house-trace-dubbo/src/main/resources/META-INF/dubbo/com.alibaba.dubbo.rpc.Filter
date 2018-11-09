@@ -1,0 +1,3 @@
+setTraceIdFilter=sf.house.trace.dubbo.SetTraceIdFilter
+getTraceIdFilter=sf.house.trace.dubbo.GetTraceIdFilter
+

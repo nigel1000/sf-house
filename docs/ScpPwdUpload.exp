@@ -1,0 +1,11 @@
+#!/usr/bin/expect  -f
+
+set timeout -1
+spawn scp -P [lindex $argv 3] [lindex $argv 0] [lindex $argv 2]:[lindex $argv 1]
+expect "*password:"
+send "[lindex $argv 4]\r"
+expect eof
+
+# ScpPwdUpload.exp localFile remoteFile remoteHost remotePort remotePassword
+# ScpPwdUpload.exp /Home/demo.jar /root/demo.jar root@127.0.0.1 22 123456
+

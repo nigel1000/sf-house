@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by hznijianfeng on 2018/8/14.
- * 打印入参和返回值
+ * Created by hznijianfeng on 2018/8/14. 打印入参和返回值
  */
 
 @Retention(RetentionPolicy.RUNTIME)

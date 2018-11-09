@@ -3,7 +3,10 @@ package sf.house.mybatis.generator.core;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import sf.house.bean.util.ConvertUtil;
+import sf.house.mybatis.generator.model.FileVo;
 import sf.house.mybatis.generator.model.MapperVo;
 import sf.house.mybatis.generator.model.Table;
 import sf.house.mybatis.generator.util.*;
@@ -15,6 +18,8 @@ import java.util.Map;
 /**
  * Created by nijianfeng on 18/1/29.
  */
+
+@Slf4j
 public class DB2Mapper {
 
     private DBUtils dbUtils = new MySqlUtils();
@@ -23,7 +28,6 @@ public class DB2Mapper {
 
     private String daoPackage;
     private String daoType;
-    private String baseMapper;
     private String domainPackage;
     private String tableNames;
     private String dateNowVal;
@@ -35,7 +39,6 @@ public class DB2Mapper {
         if (needGen) {
             daoPackage = PropertiesLoad.getByKey("mapper_dao_package", Boolean.TRUE);
             daoType = PropertiesLoad.getByKey("mapper_dao_type", Boolean.TRUE);
-            baseMapper = PropertiesLoad.getByKey("base_mapper_path", Boolean.TRUE);
             domainPackage = PropertiesLoad.getByKey("mapper_domain_package", Boolean.FALSE);
             if (StringUtils.isBlank(domainPackage)) {
                 domainPackage = PropertiesLoad.getByKey("domain_package", Boolean.TRUE);
@@ -46,7 +49,7 @@ public class DB2Mapper {
             }
             dateNowVal = PropertiesLoad.getByKey("insert_date_to_now", Boolean.FALSE);
             dynamicCondition = PropertiesLoad.getByKey("dynamic_condition_exclude", Boolean.FALSE);
-            mapperIds = PropertiesLoad.getByKey("mapper_sql_ids", Boolean.TRUE);
+            mapperIds = PropertiesLoad.getByKey("mapper_sql_ids", Boolean.FALSE);
             mapperPath = PropertiesLoad.getByKey("mapper_path", Boolean.FALSE);
             if (StringUtils.isBlank(mapperPath)) {
                 mapperPath = Constants.path;
@@ -54,9 +57,10 @@ public class DB2Mapper {
         }
     }
 
-    public synchronized void genMapper() {
+    public synchronized List<FileVo> genMapper() {
+        List<FileVo> fileVos = Lists.newArrayList();
         if (!needGen) {
-            return;
+            return fileVos;
         }
         List<String> dateNowValList = Splitter.on(",").omitEmptyStrings().trimResults().splitToList(dateNowVal);
         List<String> dynamicCondList = Splitter.on(",").omitEmptyStrings().trimResults().splitToList(dynamicCondition);
@@ -75,32 +79,35 @@ public class DB2Mapper {
             tplMap.put("dateNowValList", dateNowValList);
             tplMap.put("dynamicCondList", dynamicCondList);
             tplMap.put("mapperIdList", mapperIdList);
-            String className =
-                    NameUtils.firstUpper(NameUtils.ruleConvert(t, Constants.dbNameRule, Constants.javaNameRule));
+            String className = ConvertUtil.firstUpper(ConvertUtil.underline2Camel(t));
             tplMap.put("className", className);
             List<MapperVo> mapperVos = Lists.newArrayList();
             table.getFields().forEach(f -> {
                 MapperVo mapperVo = new MapperVo();
                 mapperVo.setType(Constants.typeMap.get(f.getType()));
                 mapperVo.setDbName(f.getField());
-                mapperVo.setJavaName(NameUtils
-                        .firstLower(NameUtils.ruleConvert(f.getField(), Constants.dbNameRule, Constants.javaNameRule)));
+                mapperVo.setJavaName(ConvertUtil.firstLower(ConvertUtil.underline2Camel(f.getField())));
                 mapperVos.add(mapperVo);
             });
             tplMap.put("mapperVos", mapperVos);
-            System.out.println(className + "Mapper.java file template map:");
-            System.out.println(tplMap);
-            FileUtils.genFile(mapperPath + "/mapper/" + className + "Mapper.xml",
-                    TemplateUtils.genTemplate("classpath:tpl/", "mapper.tpl", tplMap));
+            log.info(className + "Mapper.java file template map:");
+            log.info("{}", tplMap);
+            String filePath = mapperPath + "/mapper/" + className + "Mapper.xml";
+            String fileName = className + "Mapper.xml";
+            String fileContent = TemplateUtils.genTemplate("mapper.tpl", tplMap);
+            fileVos.add(new FileVo(filePath, fileName, fileContent));
+            FileUtils.genFile(filePath, fileContent);
         }
-        DBUtils.closeConn();
+        return fileVos;
     }
 
-    public synchronized void genDao() {
+    public synchronized List<FileVo> genDao() {
+        List<FileVo> fileVos = Lists.newArrayList();
         if (!needGen) {
-            return;
+            return fileVos;
         }
         List<String> nameList = Splitter.on(",").omitEmptyStrings().trimResults().splitToList(tableNames);
+        List<String> mapperIdList = Splitter.on(",").omitEmptyStrings().trimResults().splitToList(mapperIds);
         if (nameList.contains("all")) {
             nameList = dbUtils.getTableNames();
         }
@@ -111,16 +118,18 @@ public class DB2Mapper {
             tplMap.put("domainPackage", domainPackage);
             tplMap.put("daoPackage", daoPackage);
             tplMap.put("daoType", daoType);
-            tplMap.put("baseMapper", baseMapper);
-            String className =
-                    NameUtils.firstUpper(NameUtils.ruleConvert(t, Constants.dbNameRule, Constants.javaNameRule));
+            tplMap.put("mapperIdList", mapperIdList);
+            String className = ConvertUtil.firstUpper(ConvertUtil.underline2Camel(t));
             tplMap.put("className", className);
-            System.out.println(className + daoType + ".java file template map:");
-            System.out.println(tplMap);
-            FileUtils.genFile(mapperPath + "/dao/" + className + daoType + ".java",
-                    TemplateUtils.genTemplate("classpath:tpl/", "dao.tpl", tplMap));
+            log.info(className + daoType + ".java file template map:");
+            log.info("{}", tplMap);
+            String filePath = mapperPath + "/dao/" + className + daoType + ".java";
+            String fileName = className + daoType + ".java";
+            String fileContent = TemplateUtils.genTemplate("dao.tpl", tplMap);
+            fileVos.add(new FileVo(filePath, fileName, fileContent));
+            FileUtils.genFile(filePath, fileContent);
         }
-        DBUtils.closeConn();
+        return fileVos;
     }
 
 }

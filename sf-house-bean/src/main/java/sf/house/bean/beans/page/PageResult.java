@@ -20,7 +20,7 @@ public class PageResult<T> implements Serializable {
     /**
      * 总记录数
      */
-    private Long total;
+    private Integer total;
     /**
      * 数据
      */
@@ -41,12 +41,14 @@ public class PageResult<T> implements Serializable {
      */
     private Integer pageSize;
 
-    private PageResult(@NonNull Long total, @NonNull List<T> data) {
+    public PageResult() {}
+
+    private PageResult(@NonNull Integer total, @NonNull List<T> data) {
         this.data = data;
         this.total = total;
     }
 
-    private PageResult(@NonNull Long total, @NonNull List<T> data, @NonNull PageParam pageParam) {
+    private PageResult(@NonNull Integer total, @NonNull List<T> data, @NonNull PageParam pageParam) {
         this.data = data;
         this.total = total;
         this.pageParam = pageParam;
@@ -66,14 +68,14 @@ public class PageResult<T> implements Serializable {
     }
 
     public static <T> PageResult<T> empty() {
-        return new PageResult<>(0L, new ArrayList<>());
+        return new PageResult<>(0, new ArrayList<>());
     }
 
-    public static <T> PageResult<T> gen(Long total, List<T> data) {
+    public static <T> PageResult<T> gen(Integer total, List<T> data) {
         return new PageResult<>(total, data);
     }
 
-    public static <T> PageResult<T> gen(Long total, List<T> data, PageParam pageParam) {
+    public static <T> PageResult<T> gen(Integer total, List<T> data, PageParam pageParam) {
         return new PageResult<>(total, data, pageParam);
     }
 }

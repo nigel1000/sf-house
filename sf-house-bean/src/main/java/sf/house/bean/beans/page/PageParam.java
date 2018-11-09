@@ -19,7 +19,7 @@ public class PageParam implements Serializable {
     private Integer pageSize;
     private Integer offset;
     private Integer limit;
-    private String orderBy = " created_at desc, uuid desc";
+    private String sortBy;
 
     private int defaultPageNo = 1; /* 页码默认从1开始 */
     private int defaultOffset = 0; /* mysql默认偏移量从0开始 */
@@ -31,9 +31,9 @@ public class PageParam implements Serializable {
         return pageParam;
     }
 
-    public static PageParam valueOfByPageNo(Integer pageNo, Integer pageSize, String orderBy) {
+    public static PageParam valueOfByPageNo(Integer pageNo, Integer pageSize, String sortBy) {
         PageParam pageParam = valueOfByPageNo(pageNo, pageSize);
-        pageParam.orderBy = orderBy;
+        pageParam.sortBy = sortBy;
         return pageParam;
     }
 
@@ -44,9 +44,9 @@ public class PageParam implements Serializable {
         return pageParam;
     }
 
-    public static PageParam valueOfByPageNo(Integer pageNo, Integer pageSize, Integer defaultPageSize, String orderBy) {
+    public static PageParam valueOfByPageNo(Integer pageNo, Integer pageSize, Integer defaultPageSize, String sortBy) {
         PageParam pageParam = valueOfByPageNo(pageNo, pageSize, defaultPageSize);
-        pageParam.orderBy = orderBy;
+        pageParam.sortBy = sortBy;
         return pageParam;
     }
 

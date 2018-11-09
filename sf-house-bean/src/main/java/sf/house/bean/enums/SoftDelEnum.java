@@ -11,11 +11,11 @@ public enum SoftDelEnum {
     /**
      * 正常使用
      */
-    USED(0L, Boolean.FALSE, "是"),
+    USED(0L, Boolean.FALSE, "正常使用"),
     /**
      * 不等于0即为删除
      */
-    DELETED(null, Boolean.TRUE, "否"),;
+    DELETED(null, Boolean.TRUE, "已删除"),;
 
     @Getter
     private Long code;

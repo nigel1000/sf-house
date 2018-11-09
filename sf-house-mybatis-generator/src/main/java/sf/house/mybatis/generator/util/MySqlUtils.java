@@ -4,7 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
-import sf.house.mybatis.generator.exps.AutoCodeException;
+import lombok.extern.slf4j.Slf4j;
+import sf.house.bean.excps.UnifiedException;
 import sf.house.mybatis.generator.model.Field;
 import sf.house.mybatis.generator.model.Table;
 import sf.house.mybatis.generator.util.base.DBUtils;
@@ -17,9 +18,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by nijianfeng on 18/1/29.
  */
+
+@Slf4j
 public class MySqlUtils extends DBUtils {
 
     private static final LoadingCache<String, Table> tableCache;
+
     static {
         tableCache = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES)
                 .build(new CacheLoader<String, Table>() {
@@ -29,7 +33,9 @@ public class MySqlUtils extends DBUtils {
                     }
                 });
     }
+
     private static final LoadingCache<String, List<String>> tableNameCache;
+
     static {
         tableNameCache = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES)
                 .build(new CacheLoader<String, List<String>>() {
@@ -64,7 +70,7 @@ public class MySqlUtils extends DBUtils {
             close(rs, ps, null);
         } catch (Exception e) {
             closeConn();
-            throw AutoCodeException.valueOf("获取 table name 失败", e);
+            throw UnifiedException.gen("获取 table name 失败", e);
         }
         return names;
     }
@@ -85,10 +91,10 @@ public class MySqlUtils extends DBUtils {
             + "WHERE  table_schema ='" + Constants.dbSchema + "' AND table_Name = ";
 
     private static Table getTableByName(String tableName) {
-        System.out.println("start query " + tableName + " #################################");
+        log.info("start query " + tableName + " #################################");
         String table = "'" + tableName + "'";
         String sql = SELECT_SCHEMA + table;
-        System.out.println("execute sql: " + sql);
+        log.info("execute sql: " + sql);
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -106,7 +112,7 @@ public class MySqlUtils extends DBUtils {
                 field.setCharacterLength(rs.getString(9));
                 fields.add(field);
                 // 打印数据库某个表每列的返回数据
-                System.out.println(field);
+                log.info("{}", field);
             }
             // 获取表描述
             ps = getConnection()
@@ -117,11 +123,11 @@ public class MySqlUtils extends DBUtils {
                 tableComment = rs.getString(1);
             }
             close(rs, ps, null);
-            System.out.println("end " + tableName + " #################################");
+            log.info("end " + tableName + " #################################");
             return Table.builder().fields(fields).name(tableName).comment(tableComment).build();
         } catch (Exception e) {
             closeConn();
-            throw AutoCodeException.valueOf("获取schema数据失败", e);
+            throw UnifiedException.gen("获取schema数据失败", e);
         }
     }
 

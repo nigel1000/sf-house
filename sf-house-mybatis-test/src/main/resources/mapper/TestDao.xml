@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sf.house.mybatis.test.dao.TestDao">
+    <!--<resultMap id="TestMap" type="sf.house.mybatis.test.domain.Test">-->
+    <!--<result column="id" property="id"/>-->
+    <!--<result column="string_type" property="stringType"/>-->
+    <!--<result column="char_type" property="charType"/>-->
+    <!--<result column="mediumtext_type" property="mediumtextType"/>-->
+    <!--<result column="datetime_type" property="datetimeType"/>-->
+    <!--<result column="tinyint_type" property="tinyintType"/>-->
+    <!--<result column="smallint_type" property="smallintType"/>-->
+    <!--<result column="mediumint_type" property="mediumintType"/>-->
+    <!--<result column="int_type" property="intType"/>-->
+    <!--<result column="bigint_type" property="bigintType"/>-->
+    <!--<result column="double_type" property="doubleType"/>-->
+    <!--<result column="decimal_type" property="decimalType"/>-->
+    <!--<result column="bit_type" property="bitType"/>-->
+    <!--<result column="date_type" property="dateType"/>-->
+    <!--<result column="create_at" property="createAt"/>-->
+    <!--<result column="update_at" property="updateAt"/>-->
+    <!--</resultMap>-->
+
+    <sql id="tb">
+       `test`
+    </sql>
+
+    <sql id="cols_all">
+        `id`,
+        `string_type`,
+        `char_type`,
+        `mediumtext_type`,
+        `datetime_type`,
+        `tinyint_type`,
+        `smallint_type`,
+        `mediumint_type`,
+        `int_type`,
+        `bigint_type`,
+        `double_type`,
+        `decimal_type`,
+        `bit_type`,
+        `date_type`,
+        `create_at`,
+        `update_at`
+    </sql>
+
+    <sql id="vals_all">
+        <if test="item.id != null ">#{item.id},</if>
+        <if test="item.id == null ">null,</if>
+        #{item.stringType},
+        #{item.charType},
+        #{item.mediumtextType},
+        #{item.datetimeType},
+        #{item.tinyintType},
+        #{item.smallintType},
+        #{item.mediumintType},
+        #{item.intType},
+        #{item.bigintType},
+        #{item.doubleType},
+        #{item.decimalType},
+        #{item.bitType},
+        #{item.dateType},
+        now(),
+        now()
+    </sql>
+
+    <sql id="cols_dynamic">
+        `id`,
+        <if test="item.stringType != null ">`string_type`,</if>
+        <if test="item.charType != null ">`char_type`,</if>
+        <if test="item.mediumtextType != null ">`mediumtext_type`,</if>
+        <if test="item.datetimeType != null ">`datetime_type`,</if>
+        <if test="item.tinyintType != null ">`tinyint_type`,</if>
+        <if test="item.smallintType != null ">`smallint_type`,</if>
+        <if test="item.mediumintType != null ">`mediumint_type`,</if>
+        <if test="item.intType != null ">`int_type`,</if>
+        <if test="item.bigintType != null ">`bigint_type`,</if>
+        <if test="item.doubleType != null ">`double_type`,</if>
+        <if test="item.decimalType != null ">`decimal_type`,</if>
+        <if test="item.bitType != null ">`bit_type`,</if>
+        <if test="item.dateType != null ">`date_type`,</if>
+        `create_at`,
+        `update_at`
+    </sql>
+
+    <sql id="vals_dynamic">
+        <if test="item.id != null ">#{item.id},</if>
+        <if test="item.id == null ">null,</if>
+        <if test="item.stringType != null ">#{item.stringType},</if>
+        <if test="item.charType != null ">#{item.charType},</if>
+        <if test="item.mediumtextType != null ">#{item.mediumtextType},</if>
+        <if test="item.datetimeType != null ">#{item.datetimeType},</if>
+        <if test="item.tinyintType != null ">#{item.tinyintType},</if>
+        <if test="item.smallintType != null ">#{item.smallintType},</if>
+        <if test="item.mediumintType != null ">#{item.mediumintType},</if>
+        <if test="item.intType != null ">#{item.intType},</if>
+        <if test="item.bigintType != null ">#{item.bigintType},</if>
+        <if test="item.doubleType != null ">#{item.doubleType},</if>
+        <if test="item.decimalType != null ">#{item.decimalType},</if>
+        <if test="item.bitType != null ">#{item.bitType},</if>
+        <if test="item.dateType != null ">#{item.dateType},</if>
+        <if test="item.createAt != null ">#{item.createAt},</if>
+        <if test="item.createAt == null ">now(),</if>
+        <if test="item.updateAt != null ">#{item.updateAt}</if>
+        <if test="item.updateAt == null ">now()</if>
+    </sql>
+
+    <sql id="condition_dynamic">
+        <if test="item.stringType != null ">and `string_type` = #{item.stringType}</if>
+        <if test="item.charType != null ">and `char_type` = #{item.charType}</if>
+        <if test="item.mediumtextType != null ">and `mediumtext_type` = #{item.mediumtextType}</if>
+        <if test="item.datetimeType != null ">and `datetime_type` = #{item.datetimeType}</if>
+        <if test="item.tinyintType != null ">and `tinyint_type` = #{item.tinyintType}</if>
+        <if test="item.smallintType != null ">and `smallint_type` = #{item.smallintType}</if>
+        <if test="item.mediumintType != null ">and `mediumint_type` = #{item.mediumintType}</if>
+        <if test="item.intType != null ">and `int_type` = #{item.intType}</if>
+        <if test="item.bigintType != null ">and `bigint_type` = #{item.bigintType}</if>
+        <if test="item.doubleType != null ">and `double_type` = #{item.doubleType}</if>
+        <if test="item.decimalType != null ">and `decimal_type` = #{item.decimalType}</if>
+        <if test="item.bitType != null ">and `bit_type` = #{item.bitType}</if>
+        <if test="item.dateType != null ">and `date_type` = #{item.dateType}</if>
+    </sql>
+
+    <sql id="set_dynamic">
+        <if test="item.stringType !=null">`string_type` = #{item.stringType},</if>
+        <if test="item.charType !=null">`char_type` = #{item.charType},</if>
+        <if test="item.mediumtextType !=null">`mediumtext_type` = #{item.mediumtextType},</if>
+        <if test="item.datetimeType !=null">`datetime_type` = #{item.datetimeType},</if>
+        <if test="item.tinyintType !=null">`tinyint_type` = #{item.tinyintType},</if>
+        <if test="item.smallintType !=null">`smallint_type` = #{item.smallintType},</if>
+        <if test="item.mediumintType !=null">`mediumint_type` = #{item.mediumintType},</if>
+        <if test="item.intType !=null">`int_type` = #{item.intType},</if>
+        <if test="item.bigintType !=null">`bigint_type` = #{item.bigintType},</if>
+        <if test="item.doubleType !=null">`double_type` = #{item.doubleType},</if>
+        <if test="item.decimalType !=null">`decimal_type` = #{item.decimalType},</if>
+        <if test="item.bitType !=null">`bit_type` = #{item.bitType},</if>
+        <if test="item.dateType !=null">`date_type` = #{item.dateType},</if>
+    </sql>
+
+    <insert id="create" parameterType="sf.house.mybatis.test.domain.Test" keyProperty="item.id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="tb"/>
+        (<include refid="cols_dynamic"/>)
+        VALUES
+        (<include refid="vals_dynamic"/>)
+    </insert>
+
+    <insert id="creates" parameterType="list">
+        INSERT INTO
+        <include refid="tb"/>
+        (<include refid="cols_all"/>)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (<include refid="vals_all"/>)
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="sf.house.mybatis.test.domain.Test">
+        UPDATE
+        <include refid="tb"/>
+        <set>
+            <include refid="set_dynamic"/>
+        </set>
+        WHERE id=#{item.id}
+    </update>
+
+    <select id="list" parameterType="map" resultType="sf.house.mybatis.test.domain.Test">
+        SELECT
+        <include refid="cols_all"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <include refid="condition_dynamic"/>
+        </where>
+    </select>
+
+    <select id="paging" parameterType="map" resultType="sf.house.mybatis.test.domain.Test">
+        SELECT
+        <include refid="cols_all"/>
+        FROM
+        <include refid="tb"/>
+        <where>
+            <include refid="condition_dynamic"/>
+        </where>
+        <if test="item.sortBy != null">order by ${item.sortBy}</if>
+        <if test="item.offset != null and item.limit != null">limit #{item.offset}, #{item.limit}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        <include refid="tb"/>
+        <where>
+            <include refid="condition_dynamic"/>
+        </where>
+    </select>
+
+    <select id="load" parameterType="long" resultType="sf.house.mybatis.test.domain.Test">
+        SELECT
+        <include refid="cols_all"/>
+        FROM
+        <include refid="tb"/>
+        WHERE id = #{item.id}
+    </select>
+
+    <select id="loads" resultType="sf.house.mybatis.test.domain.Test" parameterType="list">
+        SELECT
+        <include refid="cols_all"/>
+        FROM
+        <include refid="tb"/>
+        WHERE id IN
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM
+        <include refid="tb"/>
+        WHERE id = #{item.id}
+    </delete>
+
+    <delete id="deletes" parameterType="list">
+        DELETE FROM
+        <include refid="tb"/>
+        WHERE id IN
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

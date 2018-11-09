@@ -1,0 +1,40 @@
+
+[main] INFO sf.house.redis.test.RedisApp - ################### testGetSetWithExpire ###########################
+[main] INFO sf.house.redis.test.demo.GetSetWithExpire - enter getPutWithExpireAuto
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto_1_2_]]
+[main] INFO sf.house.redis.test.demo.GetSetWithExpire - enter getPutWithExpireDiy
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireDiy_diy_]]
+[main] INFO sf.house.redis.test.RedisApp - ################### testDelete ###########################
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto_1_2_]]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto_1_2_]]
+[main] INFO sf.house.redis.test.demo.Delete - enter delete
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [del cache] [key:[sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto_1_2_]]
+[main] INFO sf.house.redis.test.demo.GetSetWithExpire - enter getPutWithExpireAuto
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto_1_2_]]
+[main] INFO sf.house.redis.test.RedisApp - ################### testBatchGetSet ###########################
+[main] INFO sf.house.redis.test.demo.BatchGetSet - enter getBatchGetSet！[1, 2, 3]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_2_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_3_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_1_]]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_2_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_3_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_1_]]
+[main] INFO sf.house.redis.test.demo.BatchGetSet - enter getBatchGetSet！[4]
+[main] INFO sf.house.redis.test.demo.BatchGetSet - enter getBatchGetSetDiff！ [21, 11, 31]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSetDiff_11_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSetDiff_21_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSetDiff_31_]]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSetDiff_11_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSetDiff_21_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSetDiff_31_]]
+[main] INFO sf.house.redis.test.demo.BatchGetSet - enter getBatchGetSetDiff！ [41]
+[main] INFO sf.house.redis.test.RedisApp - ################### testBatchDelete ###########################
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_4_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_2_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_3_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_1_]]
+[main] INFO sf.house.redis.test.demo.BatchDelete - enter batchDelete！ [1, 2, 3]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [del cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_1_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_2_, sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_3_]]
+[main] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [from cache] [key:[sf.house.redis.test.demo.BatchGetSet_getBatchGetSet_4_]]
+[main] INFO sf.house.redis.test.demo.BatchGetSet - enter getBatchGetSet！[1, 2, 3]
+[main] INFO sf.house.redis.test.RedisApp - ################### testReleaseLock ###########################
+[pool-1-thread-2] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [lock cache] [key:[sf.house.redis.test.demo.ReleaseLock_releaseLockAuto_1_2_]]
+[pool-1-thread-5] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [lock cache] [key:[sf.house.redis.test.demo.ReleaseLock_releaseLockDiy_diy_]]
+[pool-1-thread-4] INFO sf.house.redis.test.RedisApp - 获取 diy 锁失败
+[pool-1-thread-1] INFO sf.house.redis.test.RedisApp - 获取 auto 锁失败
+[pool-1-thread-3] INFO sf.house.redis.test.RedisApp - 获取 auto 锁失败
+[pool-1-thread-4] INFO sf.house.redis.test.RedisApp - 获取 diy 锁失败
+[pool-1-thread-1] INFO sf.house.redis.test.RedisApp - 获取 diy 锁失败
+[pool-1-thread-2] INFO sf.house.redis.test.demo.ReleaseLock - enter auto lock release！
+[pool-1-thread-5] INFO sf.house.redis.test.demo.ReleaseLock - enter diy lock release！
+[pool-1-thread-5] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [release cache] [key:[sf.house.redis.test.demo.ReleaseLock_releaseLockDiy_diy_]]
+[pool-1-thread-2] INFO sf.house.redis.base.Constants - [module:redis 缓存组件] [release cache] [key:[sf.house.redis.test.demo.ReleaseLock_releaseLockAuto_1_2_]]

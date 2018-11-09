@@ -1,10 +1,11 @@
 package sf.house.aop;
 
-import sf.house.aop.test.User;
-import sf.house.aop.test.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import sf.house.aop.test.User;
+import sf.house.aop.test.UserDao;
+import sf.house.aop.test.ValidTest;
 
 /**
  * Created by hznijianfeng on 2018/8/14.
@@ -17,12 +18,17 @@ public class App {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
         // 从Spring 容器中获取内容
         UserDao userDao = (UserDao) applicationContext.getBean("userDao");
-        // 执行方法
+        // catchExcp
         log.info("---------------------addUser---------------------------");
         userDao.addUser(User.getInstance());
         log.info("---------------------getUser---------------------------");
         userDao.getUser(true);
         log.info("---------------------getUser---------------------------");
         userDao.getUser(false);
+
+        // preDefine
+        ValidTest valid = (ValidTest) applicationContext.getBean("validImpl");
+        valid.valid(valid, 2);
+
     }
 }

@@ -1,18 +1,25 @@
 package sf.house.excel;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import sf.house.excel.base.ErrorEnum;
+import sf.house.excel.enums.ExcelBool;
 import sf.house.excel.excps.ExcelParseException;
-import sf.house.excel.excps.ExcelParseExceptionInfo;
 import sf.house.excel.vo.ReaderSheetVO;
 import sf.house.excel.vo.WriterSheetVO;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hznijianfeng on 2018/8/14.
  */
 
+@Slf4j
 public class ExcelSessionTest {
 
     private static String path;
@@ -26,8 +33,8 @@ public class ExcelSessionTest {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("path:\t" + path);
+    public static void main(String[] args) {
+        log.info("path:\t" + path);
 
         testCopySheet();
         testExport();
@@ -37,53 +44,59 @@ public class ExcelSessionTest {
     }
 
     private static void testExcelParse() {
-
-        ExcelSession excelSession = new ExcelSession(path + "/ExcelSession.xlsx");
+        ExcelParse excelParse = new ExcelParse(path + "/ExcelSession.xlsx");
+        excelParse.setCollectAllTips(true);
         try {
-            List<ReaderSheetVO> retList = excelSession.excelParse(1, ReaderSheetVO.class);
-            System.out.println(retList);
+            List<ReaderSheetVO> retList = excelParse.excelParse(1, ReaderSheetVO.class);
+            log.info("{}", retList);
         } catch (ExcelParseException e) {
-            StringBuilder sb = new StringBuilder();
-            List<ExcelParseExceptionInfo> errInfos = e.getInfoList();
-            if (errInfos != null && errInfos.size() > 0) {
-                for (ExcelParseExceptionInfo errInfo : errInfos) {
-                    sb.append(errInfo.getSheetName()).append("第" + errInfo.getRowNum()).append("行").append("，")
-                            .append("字段“").append(errInfo.getColumnName()).append("”").append("，")
-                            .append(errInfo.getErrMsg()).append(";");
-                }
-            }
-            System.out.println(sb.toString());
+            log.info("{}", e);
+            Map<ErrorEnum, CellStyle> maps = new HashMap<>();
+            maps.put(ErrorEnum.REGEX, createCellStyle(excelParse, IndexedColors.ROSE.getIndex()));
+            maps.put(ErrorEnum.MAX, createCellStyle(excelParse, IndexedColors.RED.getIndex()));
+            maps.put(ErrorEnum.OPTION_LIST, createCellStyle(excelParse, IndexedColors.GREEN.getIndex()));
+            excelParse.setErrorCellStyle(e, maps);
+            excelParse.save(path + "/ExcelSessionImport.xlsx");
         }
+    }
 
-
+    private static CellStyle createCellStyle(ExcelParse excelParse, short color) {
+        CellStyle cellStyle = excelParse.createDefaultCellStyle();
+        cellStyle.setFillBackgroundColor(color);
+        cellStyle.setFillBackgroundColor(color);
+        cellStyle.setTopBorderColor(color);
+        cellStyle.setBottomBorderColor(color);
+        cellStyle.setRightBorderColor(color);
+        cellStyle.setLeftBorderColor(color);
+        return cellStyle;
     }
 
     private static void testExportByTemplate() {
 
-        ExcelSession excelSession = new ExcelSession(path + "/ExcelSession.xlsx");
-        excelSession.changeSheet("测试");
-        excelSession.export(genExportData(), WriterSheetVO.class, 4);
+        ExcelExport excelExport = new ExcelExport(path + "/ExcelSession.xlsx");
+        excelExport.changeSheet("测试");
+        excelExport.export(genExportData(), WriterSheetVO.class, 4);
 
-        excelSession.changeSheet("测试2");
-        excelSession.export(genExportData(), WriterSheetVO.class);
+        excelExport.changeSheet("测试2");
+        excelExport.export(genExportData(), WriterSheetVO.class);
 
         // 返回字节 可以通过response返回前端现在
         // excelSession.getBytes();
 
-        excelSession.save(path + "/ExcelSessionExportByTemplate.xlsx");
+        excelExport.save(path + "/ExcelSessionExportByTemplate.xlsx");
     }
 
     private static void testExport() {
-        ExcelSession excelSession = new ExcelSession(ExcelSession.ExcelType.XLSX, "测试1");
-        excelSession.export(genExportData(), WriterSheetVO.class);
+        ExcelExport excelExport = new ExcelExport(ExcelSession.ExcelType.XLSX, "测试1");
+        excelExport.export(genExportData(), WriterSheetVO.class);
 
-        excelSession.changeSheet("测试2");
-        excelSession.export(genExportData(), WriterSheetVO.class, 4);
+        excelExport.changeSheet("测试2");
+        excelExport.export(genExportData(), WriterSheetVO.class, 4);
 
         // 返回字节 可以通过response返回前端现在
         // excelSession.getBytes();
 
-        excelSession.save(path + "/ExcelSessionExport.xlsx");
+        excelExport.save(path + "/ExcelSessionExport.xlsx");
     }
 
     private static void testCopySheet() {
@@ -102,6 +115,7 @@ public class ExcelSessionTest {
         o1.setAttr4(22.22);
         o1.setDate1(new Date());
         o1.setDate2(new Date());
+        o1.setExcelBool(ExcelBool.FALSE);
         WriterSheetVO o2 = new WriterSheetVO();
         o2.setAttr1("我是测试数据2");
         o2.setAttr2(12);
@@ -109,6 +123,7 @@ public class ExcelSessionTest {
         o2.setAttr4(22.22);
         o2.setDate1(new Date());
         o2.setDate2(new Date());
+        o2.setExcelBool(ExcelBool.TRUE);
 
         List<WriterSheetVO> data = Lists.newArrayList(o1, o2);
         return data;
