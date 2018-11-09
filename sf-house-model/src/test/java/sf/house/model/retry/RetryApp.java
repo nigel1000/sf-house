@@ -20,8 +20,7 @@ public class RetryApp {
         DemoRetryProcess demoRetryProcess = (DemoRetryProcess) applicationContext.getBean("demoRetryProcess");
         RetryMsgService retryMsgService = (RetryMsgService) applicationContext.getBean("retryMsgServiceImpl");
 
-        retryMsgService.create(
-                RetryMsgDto.gen(PageResult.empty(), UnifiedException.gen("RetryApp", "test")),
+        retryMsgService.create(RetryMsgDto.gen(PageResult.empty(), UnifiedException.gen("RetryApp", "test")),
                 DemoRetryMeta.DEMO);
         demoRetryProcess.handleRetry();
     }
