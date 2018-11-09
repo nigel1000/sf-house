@@ -10,7 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import sf.house.aop.annotation.TraceId;
 import sf.house.aop.util.AspectUtil;
-import sf.house.trace.common.TraceIdUtil;
+import sf.house.bean.util.trace.TraceIdUtil;
 
 /**
  * Created by hznijianfeng on 2018/8/14.

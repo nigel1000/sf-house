@@ -2,6 +2,7 @@ package sf.house.trace.web;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sf.house.bean.util.trace.TraceIdRequestUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

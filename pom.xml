@@ -17,7 +17,6 @@
         <module>sf-house-mybatis-dao</module>
         <module>sf-house-redis</module>
         <module>sf-house-model</module>
-        <module>sf-house-trace-common</module>
         <module>sf-house-trace-web</module>
         <module>sf-house-trace-dubbo</module>
         <module>sf-house-project-web</module>
@@ -105,11 +104,6 @@
             <dependency>
                 <groupId>sf.house</groupId>
                 <artifactId>sf-house-redis</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>sf.house</groupId>
-                <artifactId>sf-house-trace-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -321,6 +315,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -329,6 +324,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

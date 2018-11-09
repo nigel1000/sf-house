@@ -4,8 +4,8 @@ import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.*;
 import lombok.extern.slf4j.Slf4j;
-import sf.house.trace.common.TraceConstants;
-import sf.house.trace.common.TraceIdUtil;
+import sf.house.bean.util.trace.TraceConstants;
+import sf.house.bean.util.trace.TraceIdUtil;
 
 @Slf4j
 @Activate(group = {Constants.CONSUMER})

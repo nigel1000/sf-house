@@ -19,7 +19,7 @@
         <!-- 自身依赖 -->
         <dependency>
             <groupId>sf.house</groupId>
-            <artifactId>sf-house-trace-common</artifactId>
+            <artifactId>sf-house-bean</artifactId>
         </dependency>
     </dependencies>
 

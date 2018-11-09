@@ -1,8 +1,4 @@
-package sf.house.trace.web;
-
-import org.springframework.util.StringUtils;
-import sf.house.trace.common.TraceConstants;
-import sf.house.trace.common.TraceIdUtil;
+package sf.house.bean.util.trace;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,10 +10,10 @@ public class TraceIdRequestUtil {
     public static void initTraceId(HttpServletRequest request) {
 
         String contextTraceId = request.getHeader(TraceConstants.TRACE_ID_KEY);
-        if (StringUtils.isEmpty(contextTraceId)) {
+        if (contextTraceId == null || "".equals(contextTraceId.trim())) {
             contextTraceId = request.getParameter(TraceConstants.TRACE_ID_KEY);
         }
-        if (!StringUtils.isEmpty(contextTraceId)) {
+        if (contextTraceId != null && !"".equals(contextTraceId.trim())) {
             try {
                 TraceIdUtil.initTraceId(contextTraceId);
             } catch (Exception ex) {

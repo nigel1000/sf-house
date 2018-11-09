@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import sf.house.bean.util.ThreadPoolUtil;
-import sf.house.trace.common.TraceIdUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,6 @@ public class TransactionHelper {
             if (biz == null) {
                 return;
             }
-            biz = TraceIdUtil.wrap(biz);
             if (!TransactionSynchronizationManager.isSynchronizationActive()) {
                 log.info("transaction synchronization is NOT ACTIVE. Executing right now runnable!");
                 ThreadPoolUtil.exec(biz);

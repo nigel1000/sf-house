@@ -72,10 +72,6 @@
             <groupId>sf.house</groupId>
             <artifactId>sf-house-bean</artifactId>
         </dependency>
-        <dependency>
-            <groupId>sf.house</groupId>
-            <artifactId>sf-house-trace-common</artifactId>
-        </dependency>
     </dependencies>
 
 

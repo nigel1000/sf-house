@@ -1,6 +1,7 @@
 package sf.house.bean.util;
 
 import lombok.extern.slf4j.Slf4j;
+import sf.house.bean.util.trace.TraceIdUtil;
 
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -16,6 +17,7 @@ public class ThreadPoolUtil {
 
     private static class SingletonInstance {
         private static final ThreadPoolUtil INSTANCE = new ThreadPoolUtil();
+
         static {
             final int CORE_SIZE = Runtime.getRuntime().availableProcessors();// 线程池最少线程数
             final int MAX_SIZE = CORE_SIZE * 2;// 最大线程数
@@ -29,14 +31,15 @@ public class ThreadPoolUtil {
         }
     }
 
-    private ThreadPoolUtil() {}
+    private ThreadPoolUtil() {
+    }
 
     public static void exec(Runnable command) {
-        SingletonInstance.INSTANCE.executorService.execute(command);
+        SingletonInstance.INSTANCE.executorService.execute(TraceIdUtil.wrap(command));
     }
 
     public static <T> Future<T> submit(Callable<T> command) {
-        return SingletonInstance.INSTANCE.executorService.submit(command);
+        return SingletonInstance.INSTANCE.executorService.submit(TraceIdUtil.wrap(command));
     }
 
     public static <T> T get(Future<T> future, int milliSecond, Supplier<T> supplier) {

@@ -1,4 +1,4 @@
-package sf.house.trace.common;
+package sf.house.bean.util.trace;
 
 /**
  * Created by nijianfeng on 2018/10/5.

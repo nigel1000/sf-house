@@ -1,4 +1,4 @@
-package sf.house.trace.common;
+package sf.house.bean.util.trace;
 
 import org.slf4j.MDC;
 import sf.house.bean.util.IdUtil;
