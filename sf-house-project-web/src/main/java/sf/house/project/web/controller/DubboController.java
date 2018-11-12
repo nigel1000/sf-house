@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import sf.house.aop.util.JsonUtil;
 import sf.house.project.web.param.DubboGenericParam;
 import sf.house.project.web.param.DubboTelnetParam;
-import sf.house.project.web.util.DubboUtil;
+import sf.house.util.dubbo.DubboUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,7 +41,9 @@ public class DubboController {
 
         param.validSelf();
 
-        String result = DubboUtil.getResultByTelnet(param, DubboUtil.getUrlByGenericService(param));
+        String result = DubboUtil.getResultByTelnet(param.getClassName(), param.getMethodName(), param.getMethodParam(),
+                DubboUtil.getUrlByGenericService(param.getClassName(), param.getGroup(), param.getVersion(),
+                        param.getZkAddress(), param.getZkPort()));
 
         // 重定向传递参数的两种方法
         request.getSession().setAttribute("result", StringEscapeUtils.escapeXml11(result));
@@ -81,24 +83,5 @@ public class DubboController {
 
         return "redirect:/dubbo/generic/show";
     }
-
-    // public static void main(String[] args) {
-    // DubboGenericParam param = new DubboGenericParam();
-    // param.setClassName("com.distmerchant.api.outer.goods.GoodsReadApiFacade");
-    // param.setMethodName("queryGoodsDesc");
-    // param.setMethodParamType("java.util.List");
-    // param.setMethodParamValue("[[59149962]]");
-    // param.setVersion("1.0");
-    // param.setGroup("user_test4jd");
-    // param.setZkAddress("127.0.0.1");
-    // param.setZkPort(2181);
-    //
-    // param.validSelf();
-    //
-    // GenericService service = DubboUtil.getGenericService(param);
-    // Object result =
-    // service.$invoke(param.getMethodName(), param.getMethodParamTypes(), param.getMethodParamValues());
-    // log.info("{}", result);
-    // }
 
 }

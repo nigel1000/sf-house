@@ -1,14 +1,13 @@
-package sf.house.project.web.util;
+package sf.house.util.telnet;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.telnet.TelnetClient;
+import sf.house.bean.util.ThreadPoolUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -27,8 +26,7 @@ public class TelnetUtil {
         command(telnet, command);
 
         // 读取返回结果
-        ExecutorService executors = Executors.newFixedThreadPool(1);
-        Future<String> readFuture = executors.submit(() -> {
+        Future<String> readFuture = ThreadPoolUtil.submit(() -> {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(telnet.getInputStream(), "GBK"));
             StringBuilder sb = new StringBuilder();
             String line;
@@ -41,7 +39,7 @@ public class TelnetUtil {
             }
             return sb.toString();
         });
-        executors.submit(() -> {
+        ThreadPoolUtil.exec(() -> {
             try {
                 // readLine 是阻塞方法 3秒后若没有主动退出就强制退出
                 Thread.sleep(3000);
@@ -64,6 +62,9 @@ public class TelnetUtil {
         }
         log.info("telnet execute:{}", command);
         OutputStream outputStream = telnet.getOutputStream();
+        if (outputStream == null) {
+            return;
+        }
         outputStream.write(command.getBytes("GBK"));
         outputStream.write("\n".getBytes("GBK"));
         outputStream.flush();

@@ -1,4 +1,4 @@
-package sf.house.project.web.util;
+package sf.house.util.dubbo;
 
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.config.ApplicationConfig;
@@ -14,7 +14,7 @@ import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
 import sf.house.aop.util.SplitUtil;
 import sf.house.bean.excps.UnifiedException;
-import sf.house.project.web.param.DubboTelnetParam;
+import sf.house.util.telnet.TelnetUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 public class DubboUtil {
 
     public static GenericService getGenericService(@NonNull String className, String group, String version,
-                                                   @NonNull String zkAddress, @NonNull Integer zkPort) {
+            @NonNull String zkAddress, @NonNull Integer zkPort) {
         // 当前应用的信息
         ApplicationConfig application = new ApplicationConfig();
         application.setName("dubbo-invoke");
@@ -56,10 +56,10 @@ public class DubboUtil {
         return cache.get(referenceConfig);
     }
 
-    public static URL getUrlByGenericService(DubboTelnetParam param) {
+    public static URL getUrlByGenericService(@NonNull String className, String group, String version,
+            @NonNull String zkAddress, @NonNull Integer zkPort) {
 
-        getGenericService(param.getClassName(), param.getGroup(), param.getVersion(), param.getZkAddress(),
-                param.getZkPort());
+        getGenericService(className, group, version, zkAddress, zkPort);
 
         Iterator<Invoker<?>> iterator = DubboProtocol.getDubboProtocol().getInvokers().iterator();
         while (iterator.hasNext()) {
@@ -70,20 +70,21 @@ public class DubboUtil {
         throw UnifiedException.gen("没有此服务接口 ");
     }
 
-    public static URL getUrlByZookeeper(DubboTelnetParam param) {
+    public static URL getUrlByZookeeper(@NonNull String className, String group, String version,
+            @NonNull String zkAddress, @NonNull Integer zkPort, @NonNull String methodName) {
 
-        ZkClient zkClient = new ZkClient(param.getZkAddress() + ":" + param.getZkPort(), 10000);
-        List<String> urls = zkClient.getChildren("/dubbo/" + param.getClassName() + "/providers");
+        ZkClient zkClient = new ZkClient(zkAddress + ":" + zkPort, 10000);
+        List<String> urls = zkClient.getChildren("/dubbo/" + className + "/providers");
         zkClient.close();
         for (String url : urls) {
             URL result = URL.valueOf(URL.decode(url));
-            if (!param.getGroup().equals(result.getParameter("group"))) {
+            if (!group.equals(result.getParameter("group"))) {
                 continue;
             }
-            if (!param.getVersion().equals(result.getParameter("version"))) {
+            if (!version.equals(result.getParameter("version"))) {
                 continue;
             }
-            if (!SplitUtil.splitByComma(result.getParameter("methods")).contains(param.getMethodName())) {
+            if (!SplitUtil.splitByComma(result.getParameter("methods")).contains(methodName)) {
                 throw UnifiedException.gen(" 此服务接口没有此方法 ");
             }
             return result;
@@ -92,14 +93,15 @@ public class DubboUtil {
         throw UnifiedException.gen(" 没有此服务接口 ");
     }
 
-    public static String getResultByTelnet(DubboTelnetParam param, URL url) {
+    public static String getResultByTelnet(@NonNull String className, @NonNull String methodName,
+            @NonNull String methodParam, URL url) {
         try {
             // 发送命令
             StringBuilder command = new StringBuilder();
             command.append("invoke").append(" ");
-            command.append(param.getClassName()).append(".");
-            command.append(param.getMethodName()).append("(");
-            command.append(param.getMethodParam()).append(")");
+            command.append(className).append(".");
+            command.append(methodName).append("(");
+            command.append(methodParam).append(")");
             return TelnetUtil.command(url.getHost(), url.getPort(), command.toString());
         } catch (Exception ex) {
             throw UnifiedException.gen("telnet 连接失败", ex);

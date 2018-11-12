@@ -25,12 +25,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
-        <!--telnet-->
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>3.6</version>
-        </dependency>
         <!-- 自身依赖 -->
         <dependency>
             <groupId>sf.house</groupId>
@@ -51,6 +45,10 @@
         <dependency>
             <groupId>sf.house</groupId>
             <artifactId>sf-house-mybatis-generator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>sf.house</groupId>
+            <artifactId>sf-house-util</artifactId>
         </dependency>
     </dependencies>
 

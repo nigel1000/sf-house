@@ -23,6 +23,7 @@
         <module>sf-house-project-service</module>
         <module>sf-house-project-api</module>
         <module>sf-house-spring-cloud</module>
+        <module>sf-house-util</module>
     </modules>
 
     <!--变量管理-->
@@ -41,6 +42,7 @@
         <hession.version>4.0.38</hession.version>
         <!--dubbo-->
         <dubbo.version>2.5.5</dubbo.version>
+        <zk.version>0.7</zk.version>
         <!--spring 依赖-->
         <spring.version>4.3.10.RELEASE</spring.version>
         <aspectj.version>1.7.1</aspectj.version>
@@ -121,19 +123,12 @@
                 <artifactId>sf-house-project-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!--Java扩展类库依赖-->
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-                <scope>provided</scope>
+                <groupId>sf.house</groupId>
+                <artifactId>sf-house-util</artifactId>
+                <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${servlet.version}</version>
-                <scope>provided</scope>
-            </dependency>
+            <!-- 日志依赖 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -158,6 +153,19 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>1.7.25</version>
+            </dependency>
+            <!--Java扩展类库依赖-->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -213,6 +221,11 @@
                         <artifactId>spring-web</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.101tec</groupId>
+                <artifactId>zkclient</artifactId>
+                <version>${zk.version}</version>
             </dependency>
             <!--spring 依赖-->
             <dependency>
@@ -324,7 +337,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -59,7 +59,6 @@ public class ThreadPoolUtil {
             log.error("[ThreadPoolUtil get failed]", ex);
         }
         return supplier.get();
-
     }
 
 }
