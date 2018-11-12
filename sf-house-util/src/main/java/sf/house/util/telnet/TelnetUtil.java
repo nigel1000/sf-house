@@ -3,11 +3,13 @@ package sf.house.util.telnet;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.telnet.TelnetClient;
-import sf.house.bean.util.ThreadPoolUtil;
+import sf.house.bean.util.trace.TraceIdUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -26,7 +28,8 @@ public class TelnetUtil {
         command(telnet, command);
 
         // 读取返回结果
-        Future<String> readFuture = ThreadPoolUtil.submit(() -> {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Future<String> readFuture = executor.submit(TraceIdUtil.wrap(() -> {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(telnet.getInputStream(), "GBK"));
             StringBuilder sb = new StringBuilder();
             String line;
@@ -38,8 +41,8 @@ public class TelnetUtil {
                 sb.append(System.lineSeparator());
             }
             return sb.toString();
-        });
-        ThreadPoolUtil.exec(() -> {
+        }));
+        executor.execute(TraceIdUtil.wrap(() -> {
             try {
                 // readLine 是阻塞方法 3秒后若没有主动退出就强制退出
                 Thread.sleep(3000);
@@ -47,7 +50,7 @@ public class TelnetUtil {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+        }));
         String result = readFuture.get();
         log.info("telnet return:{}", result);
         if (telnet.isConnected()) {

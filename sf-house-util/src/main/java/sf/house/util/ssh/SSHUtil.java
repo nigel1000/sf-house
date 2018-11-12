@@ -6,13 +6,15 @@ import com.jcraft.jsch.Session;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import sf.house.bean.util.FileUtil;
-import sf.house.bean.util.ThreadPoolUtil;
+import sf.house.bean.util.trace.TraceIdUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -60,7 +62,8 @@ public class SSHUtil {
             channel.connect();
 
             // 读取返回结果
-            Future<String> readFuture = ThreadPoolUtil.submit(() -> {
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            Future<String> readFuture = executor.submit(TraceIdUtil.wrap(() -> {
                 byte[] result = outStream.toByteArray();
                 while (result == null || result.length == 0) {
                     Thread.sleep(500);
@@ -71,8 +74,8 @@ public class SSHUtil {
                     return "未返回任何结果，可能是5秒超时，可能本身就没有返回!";
                 }
                 return ret;
-            });
-            ThreadPoolUtil.exec(() -> {
+            }));
+            executor.execute(TraceIdUtil.wrap(() -> {
                 try {
                     // 5秒后若没有主动退出就强制退出
                     Thread.sleep(5000);
@@ -82,7 +85,7 @@ public class SSHUtil {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            });
+            }));
             return readFuture.get();
         } catch (Exception ex) {
             return ex.getMessage();
