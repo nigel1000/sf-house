@@ -17,15 +17,10 @@ public abstract class DBUtils {
 
     public abstract List<String> getTableNames();
 
-    private static Connection conn;
-
     protected synchronized static Connection getConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            if (conn == null) {
-                conn = DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
-            }
-            return conn;
+            return DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
         } catch (Exception e) {
             String message = "get db connection failed.";
             throw UnifiedException.gen(message);
