@@ -1,10 +1,10 @@
 package sf.house.project.web.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import sf.house.bean.beans.Response;
 import sf.house.bean.util.trace.TraceIdUtil;
@@ -81,8 +80,8 @@ public class GlobalErrorController implements ErrorController {
 
     /**
      * Determine if the stacktrace attribute should be included.
-     * 
-     * @param request the source request
+     *
+     * @param request  the source request
      * @param produces the media type produced (or {@code MediaType.ALL})
      * @return if the stacktrace attribute should be included
      */
@@ -101,7 +100,8 @@ public class GlobalErrorController implements ErrorController {
 
     // 获取错误的信息
     private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
-        RequestAttributes requestAttributes = new ServletRequestAttributes(request);
+        ServletWebRequest requestAttributes = new ServletWebRequest(request);
+
         return this.errorAttributes.getErrorAttributes(requestAttributes, includeStackTrace);
     }
 

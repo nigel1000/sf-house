@@ -5,5 +5,38 @@ spring:
   application:
     name: project-service
 
-
+sf:
+  mybatis:
+    defaultConfig:
+      initialSize: 1
+      maxWait: 1000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT sysdate()
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+      defaultAutoCommit: true
+      timeBetweenLogStatsMillis: 60000
+    mybatisMap:
+      demo:
+        dataSourceBeanName: dataSource
+        dataSourceBeanClass: com.alibaba.druid.pool.DruidDataSource
+        dataSourceInitMethod: init
+        driverClassName: "com.mysql.jdbc.Driver"
+        url: "jdbc:mysql://127.0.0.1:3306/test_base_mapper?characterEncoding=UTF-8&useSSL=false"
+        username: "root"
+        password: "#/d5)anzaVlN"
+        maxActive: 10
+        transactionManagerBeanName: transactionManager
+        transactionManagerBeanClass: org.springframework.jdbc.datasource.DataSourceTransactionManager
+        nestedTransactionAllowed: true
+        sqlSessionFactoryBeanName: sqlSessionFactoryBean
+        configLocation: classpath:mybatis-config.xml
+        mapperLocations: classpath:mybatis/*.xml
+        mapperScannerConfigurerBeanName: mapperScannerConfigurer
+        basePackage: sf.house.project.demo.dao
 

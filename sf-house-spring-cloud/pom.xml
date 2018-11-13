@@ -16,6 +16,7 @@
         <module>spring-cloud-eureka-provider</module>
         <module>spring-cloud-eureka-consumer</module>
         <module>spring-cloud-eureka-server</module>
+        <module>spring-boot-starter-mybatis</module>
     </modules>
 
     <dependencyManagement>
@@ -27,12 +28,6 @@
                 <version>Camden.SR6</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <!-- 自身依赖 -->
-            <dependency>
-                <groupId>sf.house</groupId>
-                <artifactId>spring-boot-actuator</artifactId>
-                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

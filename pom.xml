@@ -44,7 +44,7 @@
         <dubbo.version>2.5.5</dubbo.version>
         <zk.version>0.7</zk.version>
         <!--spring 依赖-->
-        <spring.version>4.3.10.RELEASE</spring.version>
+        <spring.version>5.0.10.RELEASE</spring.version>
         <aspectj.version>1.7.1</aspectj.version>
         <!--数据库 依赖-->
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
@@ -63,7 +63,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.5.6.RELEASE</version>
+                <version>2.0.6.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -126,6 +126,16 @@
             <dependency>
                 <groupId>sf.house</groupId>
                 <artifactId>sf-house-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>spring-boot-actuator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sf.house</groupId>
+                <artifactId>spring-boot-starter-mybatis</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- 日志依赖 -->
