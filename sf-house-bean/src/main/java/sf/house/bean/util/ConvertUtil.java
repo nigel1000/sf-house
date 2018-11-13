@@ -18,6 +18,9 @@ import java.util.Map;
 public class ConvertUtil {
 
     public static String underline2Camel(@NonNull String underline) {
+        if(!underline.contains("_")){
+            return underline;
+        }
         StringBuilder result = new StringBuilder();
         String a[] = underline.split("_");
         for (String s : a) {
