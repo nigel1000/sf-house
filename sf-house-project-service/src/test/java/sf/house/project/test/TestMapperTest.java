@@ -23,7 +23,7 @@ public class TestMapperTest {
     @Test
     public void testDemo() throws Exception {
 
-        log.info("################# count:{}", testMapper.count());
+        log.info("################# count:[{}]", testMapper.count());
 
     }
 
