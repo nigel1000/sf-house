@@ -37,9 +37,7 @@ public class MybatisProperties {
     private Boolean poolPreparedStatements = Boolean.TRUE;
     private Integer maxOpenPreparedStatements = 20;
     private Boolean defaultAutoCommit = Boolean.TRUE;
-    private List<String> proxyFilters;
     private Integer timeBetweenLogStatsMillis = 60000;
-    private String statLogger;
 
     // transactionManager
     private String transactionManagerBeanName;
