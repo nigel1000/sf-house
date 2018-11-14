@@ -35,6 +35,7 @@ public class MybatisConfig {
         DruidDataSourceStatLogger statLogger = applicationContext.getBean(DruidDataSourceStatLogger.class);
         for (Map.Entry<String, DruidDataSource> entry : dataSources.entrySet()) {
             DruidDataSource dataSource = entry.getValue();
+            dataSource.clearFilters();
             dataSource.setStatLogger(statLogger);
             log.info(Constants.LOG_PREFIX, entry.getKey(), " 注入 DruidDataSourceStatLogger bean ");
         }
@@ -52,6 +53,7 @@ public class MybatisConfig {
             // set 逻辑是 addAll
             List<Filter> filterList = Lists.newArrayList();
             filterList.addAll(filterMap.values());
+            dataSource.clearFilters();
             dataSource.setProxyFilters(filterList);
             log.info(Constants.LOG_PREFIX + "[{}]", entry.getKey(), " 注入 Filter beans", filterMap.keySet());
         }

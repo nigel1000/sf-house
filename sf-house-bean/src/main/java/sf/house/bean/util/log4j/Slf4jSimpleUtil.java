@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class Slf4jSimpleUtil {
 
+    @SuppressWarnings("unchecked")
     public static void fillLoggerInfo(Map<String, Object> loggerMap, Map<String, String> loggerLevelMap) {
         try {
             SimpleLoggerFactory simpleLoggerFactory =
