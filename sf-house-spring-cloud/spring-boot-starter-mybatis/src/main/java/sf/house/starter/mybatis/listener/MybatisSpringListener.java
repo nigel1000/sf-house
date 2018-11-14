@@ -37,7 +37,8 @@ public class MybatisSpringListener implements SpringApplicationRunListener {
 
     private DefaultListableBeanFactory registry;
 
-    public MybatisSpringListener(SpringApplication application, String... args) {}
+    public MybatisSpringListener(SpringApplication application, String... args) {
+    }
 
     @Override
     public void starting() {
@@ -156,28 +157,22 @@ public class MybatisSpringListener implements SpringApplicationRunListener {
         addPropertyValue(builder, "url", single.getUrl());
         addPropertyValue(builder, "username", single.getUsername());
         addPropertyValue(builder, "password", single.getPassword());
-        addPropertyValue(builder, "maxActive", single.getMaxActive());
-        addPropertyValue(builder, "filters", single.getFilters());
-        addPropertyValue(builder, "initialSize", single.getInitialSize());
-        addPropertyValue(builder, "maxWait", single.getMaxActive());
-        addPropertyValue(builder, "minIdle", single.getMinIdle());
-        addPropertyValue(builder, "timeBetweenEvictionRunsMillis", single.getTimeBetweenEvictionRunsMillis());
-        addPropertyValue(builder, "minEvictableIdleTimeMillis", single.getMinEvictableIdleTimeMillis());
-        addPropertyValue(builder, "validationQuery", single.getValidationQuery());
-        addPropertyValue(builder, "testWhileIdle", single.getTestWhileIdle());
-        addPropertyValue(builder, "testOnBorrow", single.getTestOnBorrow());
-        addPropertyValue(builder, "testOnReturn", single.getTestOnReturn());
-        addPropertyValue(builder, "poolPreparedStatements", single.getPoolPreparedStatements());
-        addPropertyValue(builder, "maxOpenPreparedStatements", single.getMaxOpenPreparedStatements());
-        addPropertyValue(builder, "defaultAutoCommit", single.getDefaultAutoCommit());
-        // if (CollectionUtils.isNotEmpty(single.getProxyFilters())) {
-        // addPropertyValue(builder, "proxyFilters",
-        // single.getProxyFilters().stream().map(registry::getBean).collect(Collectors.toList()));
-        // }
-        // addPropertyValue(builder, "timeBetweenLogStatsMillis", single.getTimeBetweenLogStatsMillis());
-        // if (StringUtils.isNotEmpty(single.getStatLogger())) {
-        // addPropertyValue(builder, "statLogger", registry.getBean(single.getStatLogger()));
-        // }
+        if ("com.alibaba.druid.pool.DruidDataSource".equals(single.getDataSourceBeanClass().trim())) {
+            addPropertyValue(builder, "testOnBorrow", single.getTestOnBorrow());
+            addPropertyValue(builder, "validationQuery", single.getValidationQuery());
+            addPropertyValue(builder, "maxActive", single.getMaxActive());
+            addPropertyValue(builder, "filters", single.getFilters());
+            addPropertyValue(builder, "initialSize", single.getInitialSize());
+            addPropertyValue(builder, "maxWait", single.getMaxActive());
+            addPropertyValue(builder, "minIdle", single.getMinIdle());
+            addPropertyValue(builder, "timeBetweenEvictionRunsMillis", single.getTimeBetweenEvictionRunsMillis());
+            addPropertyValue(builder, "minEvictableIdleTimeMillis", single.getMinEvictableIdleTimeMillis());
+            addPropertyValue(builder, "testWhileIdle", single.getTestWhileIdle());
+            addPropertyValue(builder, "testOnReturn", single.getTestOnReturn());
+            addPropertyValue(builder, "poolPreparedStatements", single.getPoolPreparedStatements());
+            addPropertyValue(builder, "maxOpenPreparedStatements", single.getMaxOpenPreparedStatements());
+            addPropertyValue(builder, "defaultAutoCommit", single.getDefaultAutoCommit());
+        }
         return builder.getBeanDefinition();
     }
 
