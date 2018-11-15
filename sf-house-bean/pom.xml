@@ -12,9 +12,10 @@
     <artifactId>sf-house-bean</artifactId>
 
     <dependencies>
+        <!-- slf4j -->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -22,14 +23,37 @@
             <artifactId>slf4j-simple</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- logback -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- log4j12 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- log4j2 -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency> <!-- 桥接：告诉Slf4j使用Log4j2 -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency> <!-- 桥接：告诉commons logging使用Log4j2 -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

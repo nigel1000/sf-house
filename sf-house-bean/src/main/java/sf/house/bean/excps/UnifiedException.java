@@ -1,6 +1,7 @@
 package sf.house.bean.excps;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import sf.house.bean.excps.base.CommonError;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
  */
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class UnifiedException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;

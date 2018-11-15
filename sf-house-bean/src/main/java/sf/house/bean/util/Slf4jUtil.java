@@ -3,9 +3,10 @@ package sf.house.bean.util;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.impl.StaticLoggerBinder;
 import sf.house.bean.excps.UnifiedException;
-import sf.house.bean.util.log4j.LogbackClassicUtil;
-import sf.house.bean.util.log4j.Slf4jLog4j12Util;
-import sf.house.bean.util.log4j.Slf4jSimpleUtil;
+import sf.house.bean.util.log4j.LogbackUtil;
+import sf.house.bean.util.log4j.Log4j12Util;
+import sf.house.bean.util.log4j.Log4j2Util;
+import sf.house.bean.util.log4j.SimpleUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,14 +18,15 @@ import java.util.Map;
  */
 
 @Slf4j
-public class Log4jUtil {
+public class Slf4jUtil {
 
     private final static String currentLog4jName = StaticLoggerBinder.getSingleton().getLoggerFactoryClassStr();
     private final static Map<String, Object> loggerMap = new HashMap<>();
     private final static Map<String, String> loggerLevelMap = new HashMap<>();
-    private final static String SLF4J_LOG4J12 = "org.slf4j.impl.Log4jLoggerFactory";
-    private final static String SLF4J_SIMPLE = "org.slf4j.impl.SimpleLoggerFactory";
-    private final static String LOGBACK_CLASSIC = "ch.qos.logback.classic.util.ContextSelectorStaticBinder";
+    private final static String LOG4J12 = "org.slf4j.impl.Log4jLoggerFactory";
+    private final static String LOG4J2 = "org.apache.logging.slf4j.Log4jLoggerFactory";
+    private final static String SIMPLE = "org.slf4j.impl.SimpleLoggerFactory";
+    private final static String LOGBACK = "ch.qos.logback.classic.util.ContextSelectorStaticBinder";
     private final static List<String> levels = Arrays.asList("error", "warn", "info", "debug", "trace");
 
     static {
@@ -34,12 +36,14 @@ public class Log4jUtil {
 
     @SuppressWarnings("unchecked")
     private static void initAndSync() {
-        if (SLF4J_LOG4J12.equals(currentLog4jName)) {
-            Slf4jLog4j12Util.fillLoggerInfo(loggerMap, loggerLevelMap);
-        } else if (SLF4J_SIMPLE.equals(currentLog4jName)) {
-            Slf4jSimpleUtil.fillLoggerInfo(loggerMap, loggerLevelMap);
-        } else if (LOGBACK_CLASSIC.equals(currentLog4jName)) {
-            LogbackClassicUtil.fillLoggerInfo(loggerMap, loggerLevelMap);
+        if (LOG4J12.equals(currentLog4jName)) {
+            Log4j12Util.fillLoggerInfo(loggerMap, loggerLevelMap);
+        } else if (SIMPLE.equals(currentLog4jName)) {
+            SimpleUtil.fillLoggerInfo(loggerMap, loggerLevelMap);
+        } else if (LOGBACK.equals(currentLog4jName)) {
+            LogbackUtil.fillLoggerInfo(loggerMap, loggerLevelMap);
+        } else if (LOG4J2.equals(currentLog4jName)) {
+            Log4j2Util.fillLoggerInfo(loggerMap, loggerLevelMap);
         } else {
             throw UnifiedException.gen("Log框架无法识别: type={" + currentLog4jName + "}");
         }
@@ -60,12 +64,14 @@ public class Log4jUtil {
                 return;
             }
         }
-        if (currentLog4jName.equals(SLF4J_LOG4J12)) {
-            Slf4jLog4j12Util.setLoggerLevel(logger, loggerLevel);
-        } else if (SLF4J_SIMPLE.equals(currentLog4jName)) {
-            Slf4jSimpleUtil.setLoggerLevel(logger, loggerLevel);
-        } else if (currentLog4jName.equals(LOGBACK_CLASSIC)) {
-            LogbackClassicUtil.setLoggerLevel(logger, loggerLevel);
+        if (currentLog4jName.equals(LOG4J12)) {
+            Log4j12Util.setLoggerLevel(logger, loggerLevel);
+        } else if (SIMPLE.equals(currentLog4jName)) {
+            SimpleUtil.setLoggerLevel(logger, loggerLevel);
+        } else if (currentLog4jName.equals(LOGBACK)) {
+            LogbackUtil.setLoggerLevel(logger, loggerLevel);
+        } else if (currentLog4jName.equals(LOG4J2)) {
+            Log4j2Util.setLoggerLevel(logger, loggerLevel);
         }
     }
 
