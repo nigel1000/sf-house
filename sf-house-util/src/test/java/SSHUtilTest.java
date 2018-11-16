@@ -9,7 +9,7 @@ import sf.house.util.ssh.SSHUtil;
 @Slf4j
 public class SSHUtilTest {
 
-    public static String path;
+    private static String path;
 
     static {
         String targetPath = SSHUtilTest.class.getResource("/").getPath();
@@ -21,26 +21,61 @@ public class SSHUtilTest {
         log.info("文件位置:" + path);
     }
 
+    private static String host = "10.177.34.196";
+
     public static void main(String[] args) throws Exception {
         String home = System.getProperty("user.home");
         log.info("############## {}", home);
 
-        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo("10.177.8.97", "hznijianfeng");
-        sshInfo.setPort(1046);
-        sshInfo.setCmd("pwd");
-        String result = SSHUtil.execCommand(sshInfo);
-        result = result.replace("\n", "");
-        log.info("############## {}", result);
+        String machinePath = cmd("pwd");
+        upload(machinePath);
+        download(machinePath);
 
-        sshInfo.setSourcePath(path + "/demo.log");
-        sshInfo.setTargetPath(result);
-        SSHUtil.uploadFile(sshInfo);
-
-        sshInfo.setSourcePath(result + "/demo.log");
-        sshInfo.setTargetPath(path + "/demo-" + IdUtil.snowflakeId() + ".log");
-        SSHUtil.downloadFile(sshInfo);
+        forward();
 
         System.exit(0);
     }
+
+    private static void forward() throws Exception {
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        sshInfo.setPort(1046);
+        sshInfo.setLocalForward(true);
+        sshInfo.setLocalPort(11111);
+        sshInfo.setRemotePort(17079);
+        sshInfo.getSession();
+
+        boolean needHold = true;
+        while (needHold) {
+            Thread.sleep(1000 * 60 * 5);
+            needHold = false;
+        }
+    }
+
+    private static String cmd(String cmd) {
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        sshInfo.setPort(1046);
+        sshInfo.setCmd(cmd);
+        String result = SSHUtil.execCommand(sshInfo);
+        result = result.replace("\n", "");
+        log.info("############## {}", result);
+        return result;
+    }
+
+    private static void upload(String machinePath) {
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        sshInfo.setPort(1046);
+        sshInfo.setSourcePath(path + "/demo.log");
+        sshInfo.setTargetPath(machinePath);
+        SSHUtil.uploadFile(sshInfo);
+    }
+
+    private static void download(String machinePath) {
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        sshInfo.setPort(1046);
+        sshInfo.setSourcePath(machinePath + "/demo.log");
+        sshInfo.setTargetPath(path + "/demo-" + IdUtil.snowflakeId() + ".log");
+        SSHUtil.downloadFile(sshInfo);
+    }
+
 
 }

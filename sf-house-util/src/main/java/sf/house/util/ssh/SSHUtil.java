@@ -165,9 +165,15 @@ public class SSHUtil {
         private String sourcePath;    // 源文件地址
         private String targetPath;    // 目标地址
 
+        // SSH 端口转发
+        private Boolean localForward = false;// 本地转发
+        private Boolean remoteForward = false;// 远程转发
+        private Integer localPort;// 本地端口
+        private String remoteHost = "localhost";// 远程服务器
+        private Integer remotePort;// 远程服务端口
+
         public SSHInfo(String host, String user) {
             this.user = user;
-            this.cmd = cmd;
             this.host = host;
         }
 
@@ -196,6 +202,20 @@ public class SSHUtil {
             // 可选配置
             Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");
+
+            if (localForward && remoteForward) {
+                throw new IllegalArgumentException("不能既本地转发又远程转发");
+            }
+            // 设置SSH本地端口转发
+            if (localForward) {
+                int assignedPort = session.setPortForwardingL(localPort, remoteHost, remotePort);
+                log.info("设置SSH本地端口转发,本地转发到远程, assignedPort:[{}]", assignedPort);
+            }
+            // 设置SSH远程端口转发
+            if (remoteForward) {
+                session.setPortForwardingR(remotePort, remoteHost, localPort);
+            }
+
             session.setConfig(config);
             // 在 promptYesNo 方法中return true；就不会在连接的时候询问是否确定要连接
             session.setUserInfo(new UserInfo() {
