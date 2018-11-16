@@ -30,23 +30,14 @@ public class SimpleUtil {
                 loggerMap.putIfAbsent(loggerName, logger);
                 if (logger.isErrorEnabled()) {
                     loggerLevelMap.putIfAbsent(loggerName, LocationAwareLogger.ERROR_INT + "");
-                    continue;
-                }
-                if (logger.isWarnEnabled()) {
+                } else if (logger.isWarnEnabled()) {
                     loggerLevelMap.putIfAbsent(loggerName, LocationAwareLogger.WARN_INT + "");
-                    continue;
-                }
-                if (logger.isInfoEnabled()) {
+                } else if (logger.isInfoEnabled()) {
                     loggerLevelMap.putIfAbsent(loggerName, LocationAwareLogger.INFO_INT + "");
-                    continue;
-                }
-                if (logger.isDebugEnabled()) {
+                } else if (logger.isDebugEnabled()) {
                     loggerLevelMap.putIfAbsent(loggerName, LocationAwareLogger.DEBUG_INT + "");
-                    continue;
-                }
-                if (logger.isTraceEnabled()) {
+                } else if (logger.isTraceEnabled()) {
                     loggerLevelMap.putIfAbsent(loggerName, LocationAwareLogger.TRACE_INT + "");
-                    continue;
                 }
             }
         } catch (Exception ex) {
@@ -59,18 +50,16 @@ public class SimpleUtil {
             SimpleLogger simpleLogger = (SimpleLogger) logger;
             if ("error".equalsIgnoreCase(loggerLevel)) {
                 loggerLevel = LocationAwareLogger.ERROR_INT + "";
-            }
-            if ("warn".equalsIgnoreCase(loggerLevel)) {
+            } else if ("warn".equalsIgnoreCase(loggerLevel)) {
                 loggerLevel = LocationAwareLogger.WARN_INT + "";
-            }
-            if ("info".equalsIgnoreCase(loggerLevel)) {
+            } else if ("info".equalsIgnoreCase(loggerLevel)) {
                 loggerLevel = LocationAwareLogger.INFO_INT + "";
-            }
-            if ("debug".equalsIgnoreCase(loggerLevel)) {
+            } else if ("debug".equalsIgnoreCase(loggerLevel)) {
                 loggerLevel = LocationAwareLogger.DEBUG_INT + "";
-            }
-            if ("trace".equalsIgnoreCase(loggerLevel)) {
+            } else if ("trace".equalsIgnoreCase(loggerLevel)) {
                 loggerLevel = LocationAwareLogger.TRACE_INT + "";
+            } else {
+                return;
             }
             Field field = SimpleLogger.class.getDeclaredField("currentLogLevel");
             field.setAccessible(true);

@@ -3,9 +3,9 @@ package sf.house.bean.util;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.impl.StaticLoggerBinder;
 import sf.house.bean.excps.UnifiedException;
-import sf.house.bean.util.log4j.LogbackUtil;
 import sf.house.bean.util.log4j.Log4j12Util;
 import sf.house.bean.util.log4j.Log4j2Util;
+import sf.house.bean.util.log4j.LogbackUtil;
 import sf.house.bean.util.log4j.SimpleUtil;
 
 import java.util.Arrays;
@@ -27,15 +27,14 @@ public class Slf4jUtil {
     private final static String LOG4J2 = "org.apache.logging.slf4j.Log4jLoggerFactory";
     private final static String SIMPLE = "org.slf4j.impl.SimpleLoggerFactory";
     private final static String LOGBACK = "ch.qos.logback.classic.util.ContextSelectorStaticBinder";
-    private final static List<String> levels = Arrays.asList("error", "warn", "info", "debug", "trace");
+    private final static List<String> levels = Arrays.asList(null, "off", "fatal", "error", "warn", "info", "debug", "trace", "all");
 
     static {
-        log.info("当前使用的 LoggerFactory :[{}]", currentLog4jName);
         initAndSync();
     }
 
     @SuppressWarnings("unchecked")
-    private static void initAndSync() {
+    private synchronized static void initAndSync() {
         if (LOG4J12.equals(currentLog4jName)) {
             Log4j12Util.fillLoggerInfo(loggerMap, loggerLevelMap);
         } else if (SIMPLE.equals(currentLog4jName)) {
@@ -47,10 +46,11 @@ public class Slf4jUtil {
         } else {
             throw UnifiedException.gen("Log框架无法识别: type={" + currentLog4jName + "}");
         }
+        log.info("当前 Slf4j 使用的 LoggerFactory :[{}],Logger:{}", currentLog4jName, getLoggerNames());
     }
 
     public static void setLogLevel(String loggerName, String loggerLevel) {
-        if (loggerName == null || loggerLevel == null) {
+        if (loggerName == null) {
             return;
         }
         if (!levels.contains(loggerLevel)) {
@@ -99,6 +99,10 @@ public class Slf4jUtil {
         for (Map.Entry<String, Object> entry : loggerMap.entrySet()) {
             recovery(entry.getKey());
         }
+    }
+
+    public static List<String> getLoggerNames() {
+        return FunctionUtil.valueList(loggerMap.keySet(), t -> t);
     }
 
 }
