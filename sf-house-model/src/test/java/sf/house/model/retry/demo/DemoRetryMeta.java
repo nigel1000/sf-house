@@ -1,6 +1,5 @@
 package sf.house.model.retry.demo;
 
-import lombok.Getter;
 import lombok.Setter;
 import sf.house.model.retry.api.RetryMeta;
 import sf.house.model.retry.api.RetryMsgService;
@@ -12,17 +11,12 @@ public enum DemoRetryMeta implements RetryMeta {
 
     DEMO("goods_change", "kafka_consume", "retry_msg"),;
 
-    @Getter
     private String bizType;
-    @Getter
     private String msgType;
-    @Getter
     private String tableName;
     @Setter
-    @Getter
     private String msgKey;
     @Setter
-    @Getter
     private RetryMsgService retryMsgService;
 
     DemoRetryMeta(String bizType, String msgType, String tableName) {

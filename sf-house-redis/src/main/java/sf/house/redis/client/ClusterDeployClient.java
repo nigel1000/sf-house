@@ -1,6 +1,7 @@
 package sf.house.redis.client;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.util.CollectionUtils;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Data
 @Slf4j
+@EqualsAndHashCode(callSuper = false)
 public class ClusterDeployClient extends JedisClusterDeployClient {
 
     // 部分或全部cluster节点信息

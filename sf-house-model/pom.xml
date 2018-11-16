@@ -5,22 +5,14 @@
     <parent>
         <artifactId>sf-house</artifactId>
         <groupId>sf.house</groupId>
-        <version>404.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sf-house-model</artifactId>
 
     <dependencies>
-        <!--日志类库依赖-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
+        <!--扩展类依赖-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

@@ -54,6 +54,16 @@ public class Test implements Serializable {
     private Integer smallintType;
     
     /**
+     * 创建时间
+     */
+    private Date updateAt;
+    
+    /**
+     * 创建时间
+     */
+    private Date createAt;
+    
+    /**
      * mediumint
      */
     private Long mediumintType;
@@ -87,16 +97,6 @@ public class Test implements Serializable {
      * date
      */
     private Date dateType;
-    
-    /**
-     * 创建时间
-     */
-    private Date createAt;
-    
-    /**
-     * 修改时间
-     */
-    private Date updateAt;
     
 
 }

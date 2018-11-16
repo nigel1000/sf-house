@@ -36,12 +36,12 @@
     <sql id="cols_dynamic">
     <#list mapperVos as vo>
         <#if dateNowValList?seq_contains(vo.javaName)>
-        `${vo.dbName}`<#if vo_has_next>,</#if>
+        `${vo.dbName}`,
         <#else>
             <#if vo.javaName == 'id'>
-        `id`<#if vo_has_next>,</#if>
+        `id`,
             <#else>
-        <if test="item.${vo.javaName} != null ">`${vo.dbName}`<#if vo_has_next>,</#if></if>
+        <if test="item.${vo.javaName} != null ">`${vo.dbName}`,</if>
             </#if>
         </#if>
     </#list>
@@ -50,13 +50,13 @@
     <sql id="vals_dynamic">
     <#list mapperVos as vo>
         <#if vo.javaName == 'id'>
-        <if test="item.id != null ">${"#"}{item.id}<#if vo_has_next>,</#if></if>
-        <if test="item.id == null ">null<#if vo_has_next>,</#if></if>
+        <if test="item.id != null ">${"#"}{item.id},</if>
+        <if test="item.id == null ">null,</if>
         <#else>
-        <if test="item.${vo.javaName} != null ">${"#"}{item.${vo.javaName}}<#if vo_has_next>,</#if></if>
+        <if test="item.${vo.javaName} != null ">${"#"}{item.${vo.javaName}},</if>
         </#if>
         <#if dateNowValList?seq_contains(vo.javaName)>
-        <if test="item.${vo.javaName} == null ">now()<#if vo_has_next>,</#if></if>
+        <if test="item.${vo.javaName} == null ">now(),</if>
         </#if>
     </#list>
     </sql>
@@ -83,9 +83,13 @@
     <insert id="create" parameterType="${domainPackage}.${className}" keyProperty="item.id" useGeneratedKeys="true">
         INSERT INTO
         <include refid="tb"/>
-        (<include refid="cols_dynamic"/>)
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="cols_dynamic"/>
+        </trim>
         VALUES
-        (<include refid="vals_dynamic"/>)
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="vals_dynamic"/>
+        </trim>
     </insert>
     </#if>
     <#if mapperIdList?seq_contains("creates")>

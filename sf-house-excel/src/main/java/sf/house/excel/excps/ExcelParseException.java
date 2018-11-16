@@ -1,6 +1,7 @@
 package sf.house.excel.excps;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  */
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ExcelParseException extends Exception {
 
     private List<ExcelParseExceptionInfo> infoList = new ArrayList<>();

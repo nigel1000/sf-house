@@ -2,6 +2,7 @@ package sf.house.redis.client;
 
 import com.google.common.collect.Sets;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.JedisSentinelPool;
@@ -16,6 +17,7 @@ import java.util.List;
  * Created by hznijianfeng on 2018/9/6.
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SentinelDeployClient extends JedisDeployClient {
 
     // 主节点名

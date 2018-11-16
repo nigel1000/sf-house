@@ -1,6 +1,7 @@
 package sf.house.redis.client;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import sf.house.aop.util.BeanUtil;
@@ -12,6 +13,7 @@ import sf.house.redis.client.base.JedisDeployClient;
  * Created by hznijianfeng on 2018/9/6.
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SingleDeployClient extends JedisDeployClient {
 
     private String hostName = "localhost";

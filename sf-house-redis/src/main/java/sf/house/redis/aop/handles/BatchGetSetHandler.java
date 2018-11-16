@@ -34,6 +34,7 @@ public class BatchGetSetHandler implements RedisCacheHandler {
     private GetSetWithExpireHandler getSetWithExpireHandler;
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object handle(ProceedingJoinPoint point, RedisCache redisCache) throws Throwable {
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
         if (redisCache.keyAuto().length != 1 || clazzMeta.getArgs().length < 1) {

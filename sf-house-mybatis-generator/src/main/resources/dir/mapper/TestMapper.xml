@@ -10,6 +10,8 @@
         <!--<result column="datetime_type" property="datetimeType"/>-->
         <!--<result column="tinyint_type" property="tinyintType"/>-->
         <!--<result column="smallint_type" property="smallintType"/>-->
+        <!--<result column="update_at" property="updateAt"/>-->
+        <!--<result column="create_at" property="createAt"/>-->
         <!--<result column="mediumint_type" property="mediumintType"/>-->
         <!--<result column="int_type" property="intType"/>-->
         <!--<result column="bigint_type" property="bigintType"/>-->
@@ -17,8 +19,6 @@
         <!--<result column="decimal_type" property="decimalType"/>-->
         <!--<result column="bit_type" property="bitType"/>-->
         <!--<result column="date_type" property="dateType"/>-->
-        <!--<result column="create_at" property="createAt"/>-->
-        <!--<result column="update_at" property="updateAt"/>-->
     <!--</resultMap>-->
 
     <sql id="tb">
@@ -33,15 +33,15 @@
         `datetime_type`,
         `tinyint_type`,
         `smallint_type`,
+        `update_at`,
+        `create_at`,
         `mediumint_type`,
         `int_type`,
         `bigint_type`,
         `double_type`,
         `decimal_type`,
         `bit_type`,
-        `date_type`,
-        `create_at`,
-        `update_at`
+        `date_type`
     </sql>
 
     <sql id="vals_all">
@@ -53,15 +53,15 @@
         #{item.datetimeType},
         #{item.tinyintType},
         #{item.smallintType},
+        now(),
+        now(),
         #{item.mediumintType},
         #{item.intType},
         #{item.bigintType},
         #{item.doubleType},
         #{item.decimalType},
         #{item.bitType},
-        #{item.dateType},
-        now(),
-        now()
+        #{item.dateType}
     </sql>
 
     <sql id="cols_dynamic">
@@ -72,6 +72,8 @@
         <if test="item.datetimeType != null ">`datetime_type`,</if>
         <if test="item.tinyintType != null ">`tinyint_type`,</if>
         <if test="item.smallintType != null ">`smallint_type`,</if>
+        `update_at`,
+        `create_at`,
         <if test="item.mediumintType != null ">`mediumint_type`,</if>
         <if test="item.intType != null ">`int_type`,</if>
         <if test="item.bigintType != null ">`bigint_type`,</if>
@@ -79,8 +81,6 @@
         <if test="item.decimalType != null ">`decimal_type`,</if>
         <if test="item.bitType != null ">`bit_type`,</if>
         <if test="item.dateType != null ">`date_type`,</if>
-        `create_at`,
-        `update_at`
     </sql>
 
     <sql id="vals_dynamic">
@@ -92,6 +92,10 @@
         <if test="item.datetimeType != null ">#{item.datetimeType},</if>
         <if test="item.tinyintType != null ">#{item.tinyintType},</if>
         <if test="item.smallintType != null ">#{item.smallintType},</if>
+        <if test="item.updateAt != null ">#{item.updateAt},</if>
+        <if test="item.updateAt == null ">now(),</if>
+        <if test="item.createAt != null ">#{item.createAt},</if>
+        <if test="item.createAt == null ">now(),</if>
         <if test="item.mediumintType != null ">#{item.mediumintType},</if>
         <if test="item.intType != null ">#{item.intType},</if>
         <if test="item.bigintType != null ">#{item.bigintType},</if>
@@ -99,10 +103,6 @@
         <if test="item.decimalType != null ">#{item.decimalType},</if>
         <if test="item.bitType != null ">#{item.bitType},</if>
         <if test="item.dateType != null ">#{item.dateType},</if>
-        <if test="item.createAt != null ">#{item.createAt},</if>
-        <if test="item.createAt == null ">now(),</if>
-        <if test="item.updateAt != null ">#{item.updateAt}</if>
-        <if test="item.updateAt == null ">now()</if>
     </sql>
 
     <sql id="condition_dynamic">
@@ -140,9 +140,13 @@
     <insert id="create" parameterType="sf.house.mybatis.test.domain.Test" keyProperty="item.id" useGeneratedKeys="true">
         INSERT INTO
         <include refid="tb"/>
-        (<include refid="cols_dynamic"/>)
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="cols_dynamic"/>
+        </trim>
         VALUES
-        (<include refid="vals_dynamic"/>)
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="vals_dynamic"/>
+        </trim>
     </insert>
 
     <insert id="creates" parameterType="list">
