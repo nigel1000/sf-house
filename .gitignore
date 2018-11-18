@@ -13,3 +13,5 @@ bin/
 dist/
 .DS_Store
 .npm-debug
+
+.flattened-pom.xml

@@ -36,10 +36,10 @@ public class ExcelSessionTest {
     public static void main(String[] args) {
         log.info("path:\t" + path);
 
-        testCopySheet();
+//        testCopySheet();
         testExport();
-        testExportByTemplate();
-        testExcelParse();
+//        testExportByTemplate();
+//        testExcelParse();
 
     }
 
@@ -87,11 +87,15 @@ public class ExcelSessionTest {
     }
 
     private static void testExport() {
+        List<WriterSheetVO> vos = Lists.newArrayList();
+        for (int i = 0; i < 10000; i++) {
+            vos.addAll(genExportData());
+        }
         ExcelExport excelExport = new ExcelExport(ExcelSession.ExcelType.XLSX, "测试1");
-        excelExport.export(genExportData(), WriterSheetVO.class);
+        excelExport.export(vos, WriterSheetVO.class);
 
         excelExport.changeSheet("测试2");
-        excelExport.export(genExportData(), WriterSheetVO.class, 4);
+        excelExport.export(vos, WriterSheetVO.class, 4);
 
         // 返回字节 可以通过response返回前端现在
         // excelSession.getBytes();
