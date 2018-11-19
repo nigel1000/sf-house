@@ -12,10 +12,6 @@
     <artifactId>sf-house-util</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
         <!--telnet-->
         <dependency>
             <groupId>commons-net</groupId>

@@ -21,15 +21,16 @@ public class SSHUtilTest {
         log.info("文件位置:" + path);
     }
 
-    private static String host = "10.177.34.196";
+    private static String REMOTE_HOST = "10.177.8.97";
+    private static Integer DEBUG_PORT = 9800;
 
     public static void main(String[] args) throws Exception {
         String home = System.getProperty("user.home");
         log.info("############## {}", home);
 
-        String machinePath = cmd("pwd");
-        upload(machinePath);
-        download(machinePath);
+//        String machinePath = cmd("pwd");
+//        upload(machinePath);
+//        download(machinePath);
 
         forward();
 
@@ -37,11 +38,11 @@ public class SSHUtilTest {
     }
 
     private static void forward() throws Exception {
-        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(REMOTE_HOST, "hznijianfeng");
         sshInfo.setPort(1046);
         sshInfo.setLocalForward(true);
         sshInfo.setLocalPort(11111);
-        sshInfo.setRemotePort(17079);
+        sshInfo.setRemotePort(DEBUG_PORT);
         sshInfo.getSession();
 
         boolean needHold = true;
@@ -52,7 +53,7 @@ public class SSHUtilTest {
     }
 
     private static String cmd(String cmd) {
-        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(REMOTE_HOST, "hznijianfeng");
         sshInfo.setPort(1046);
         sshInfo.setCmd(cmd);
         String result = SSHUtil.execCommand(sshInfo);
@@ -62,7 +63,7 @@ public class SSHUtilTest {
     }
 
     private static void upload(String machinePath) {
-        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(REMOTE_HOST, "hznijianfeng");
         sshInfo.setPort(1046);
         sshInfo.setSourcePath(path + "/demo.log");
         sshInfo.setTargetPath(machinePath);
@@ -70,7 +71,7 @@ public class SSHUtilTest {
     }
 
     private static void download(String machinePath) {
-        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(host, "hznijianfeng");
+        SSHUtil.SSHInfo sshInfo = new SSHUtil.SSHInfo(REMOTE_HOST, "hznijianfeng");
         sshInfo.setPort(1046);
         sshInfo.setSourcePath(machinePath + "/demo.log");
         sshInfo.setTargetPath(path + "/demo-" + IdUtil.snowflakeId() + ".log");
