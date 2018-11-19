@@ -7,6 +7,7 @@ import sf.house.excel.enums.ExcelBool;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by hznijianfeng on 2018/8/14.
@@ -28,4 +29,8 @@ public class ReaderSheetVO implements Serializable {
     private ExcelBool bool;
     @ExcelParseField(cellIndex = 5, title = "属性6", required = false, desc = "日期类型", dateParse = "yyyy-MM-dd HH:mm:ss")
     private Date date;
+    @ExcelParseField(startIndex = 0, endIndex = 3, dataType = String.class, required = false)
+    private List<String> fixed2end;
+    @ExcelParseField(startIndex = 2, endIndex = Integer.MAX_VALUE, dataType = String.class, required = false)
+    private List<String> fixed2last;
 }

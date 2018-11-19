@@ -37,9 +37,9 @@ public class ExcelSessionTest {
         log.info("path:\t" + path);
 
 //        testCopySheet();
-        testExport();
+//        testExport();
 //        testExportByTemplate();
-//        testExcelParse();
+        testExcelParse();
 
     }
 

@@ -21,7 +21,13 @@ public @interface ExcelParseField {
     String requiredTips() default "定义属性不能为空而录入数据为空";
 
     // excel的cellIndex
-    int cellIndex() default 0;
+    int cellIndex() default Integer.MIN_VALUE;
+
+    int startIndex() default Integer.MIN_VALUE;
+
+    int endIndex() default Integer.MIN_VALUE;
+
+    Class dataType() default String.class;
 
     // excel的title
     String title() default "";

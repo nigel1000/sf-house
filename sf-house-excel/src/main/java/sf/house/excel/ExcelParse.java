@@ -1,5 +1,6 @@
 package sf.house.excel;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -116,39 +117,63 @@ public class ExcelParse extends ExcelSession {
         }
         String sheetName = this.sheet.getSheetName();
         int rowNum = row.getRowNum() + 1;
+        int startIndex;
+        int endIndex;
+        Class dataType;
         for (int i = 0; i < targetClazz.getFields().size(); i++) {
             ExcelParseField excelField = targetClazz.getExcelParseFields().get(i);
             String title = excelField.title();
-            int cellIndex = excelField.cellIndex();
-            if (row.getLastCellNum() < cellIndex) {
+            if (excelField.cellIndex() != Integer.MIN_VALUE) {
+                startIndex = excelField.cellIndex();
+                endIndex = excelField.cellIndex();
+                dataType = targetClazz.getFieldTypes().get(i);
+            } else if (excelField.startIndex() != Integer.MIN_VALUE) {
+                startIndex = excelField.startIndex();
+                if (excelField.endIndex() == Integer.MAX_VALUE) {
+                    // row.getLastCellNum() 不是从0开始的
+                    endIndex = row.getLastCellNum() - 1;
+                } else {
+                    endIndex = excelField.endIndex();
+                }
+                dataType = excelField.dataType();
+            } else {
                 continue;
             }
-            int colNum = cellIndex + 1;
-            Object value = null;
-            String currentValue;
-            // 获取数据并转换类型
-            Cell cell = getCell(row.getRowNum(), cellIndex);
-            currentValue = getCellValue(cell.getRowIndex(), cellIndex);
-            if (Constants.isNotEmpty(currentValue)) {
-                try {
-                    ExcelParseExceptionInfo expInfo = ExcelParseExceptionInfo.builder().columnName(title).rowNum(rowNum)
-                            .sheetName(sheetName).colNum(colNum).currentValue(currentValue).build();
-                    value = getFieldValue(currentValue, targetClazz.getFieldTypes().get(i), excelField,
-                            excelParseException, expInfo);
-                } catch (Exception e) {
-                    log.debug(Constants.MODULE, e);
+            List<Object> values = Lists.newArrayList();
+            for (int cellIndex = startIndex; cellIndex <= endIndex; cellIndex++) {
+                if (row.getLastCellNum() <= cellIndex) {
                     continue;
                 }
-            }
-            // 校验
-            for (CheckStrategy checkStrategy : checkList) {
-                ExcelParseExceptionInfo expInfo = ExcelParseExceptionInfo.builder().columnName(title).rowNum(rowNum)
-                        .sheetName(sheetName).colNum(colNum).currentValue(currentValue).build();
-                excelParseException.addInfo(checkStrategy.check(value, excelField, expInfo));
+                int colNum = cellIndex + 1;
+                Object value = null;
+                String currentValue;
+                // 获取数据并转换类型
+                Cell cell = getCell(row.getRowNum(), cellIndex);
+                currentValue = getCellValue(cell.getRowIndex(), cellIndex);
+                if (Constants.isNotEmpty(currentValue)) {
+                    try {
+                        ExcelParseExceptionInfo expInfo = ExcelParseExceptionInfo.builder().columnName(title).rowNum(rowNum)
+                                .sheetName(sheetName).colNum(colNum).currentValue(currentValue).build();
+                        value = getFieldValue(currentValue, dataType, excelField, excelParseException, expInfo);
+                    } catch (Exception e) {
+                        log.debug(Constants.MODULE, e);
+                        continue;
+                    }
+                }
+                // 校验
+                for (CheckStrategy checkStrategy : checkList) {
+                    ExcelParseExceptionInfo expInfo = ExcelParseExceptionInfo.builder().columnName(title).rowNum(rowNum)
+                            .sheetName(sheetName).colNum(colNum).currentValue(currentValue).build();
+                    excelParseException.addInfo(checkStrategy.check(value, excelField, expInfo));
+                }
+                values.add(value);
             }
             // 利用反射赋值
             if (excelParseException.isEmptyInfo()) {
-                targetClazz.setFieldValue(targetClazz.getSetFieldMethods().get(i), result, value);
+                if (values.size() != 0) {
+                    targetClazz.setFieldValue(targetClazz.getSetFieldMethods().get(i), result,
+                            values.size() == 1 ? values.get(0) : values);
+                }
             }
         }
         if (!excelParseException.isEmptyInfo()) {
@@ -158,7 +183,7 @@ public class ExcelParse extends ExcelSession {
     }
 
     private Object getFieldValue(String currentValue, Class fieldTypeClass, ExcelParseField excelAnnotation,
-            ExcelParseException exp, ExcelParseExceptionInfo expInfo) {
+                                 ExcelParseException exp, ExcelParseExceptionInfo expInfo) {
         try {
             Object value;
             if (TypeUtil.isAssignableFrom(BaseEnum.class, fieldTypeClass)) {

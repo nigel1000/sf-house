@@ -4,12 +4,16 @@ import lombok.Getter;
 import lombok.NonNull;
 import sf.house.bean.excps.UnifiedException;
 import sf.house.bean.util.ConvertUtil;
+import sf.house.bean.util.TypeUtil;
 import sf.house.excel.annotations.ExcelExportField;
 import sf.house.excel.annotations.ExcelParseField;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +49,7 @@ public class ExcelTargetClazz<C> {
                 if (excelParseField == null) {
                     continue;
                 }
+                validExcelParseField(excelParseField, field.getType());
                 this.excelParseFields.add(excelParseField);
             } else if (ClazzType.FIELD_EXPORT.equals(clazzType)) {
                 ExcelExportField excelExportField = field.getAnnotation(ExcelExportField.class);
@@ -83,7 +88,8 @@ public class ExcelTargetClazz<C> {
         try {
             method.invoke(target, value);
         } catch (Exception e) {
-            throw UnifiedException.gen(Constants.MODULE, "设值" + this.target.getName() + "出错", e);
+            throw UnifiedException.gen(Constants.MODULE, "设值" +
+                    this.target.getName() + "-" + method.getName() + "出错", e);
         }
     }
 
@@ -91,7 +97,40 @@ public class ExcelTargetClazz<C> {
         try {
             return method.invoke(target);
         } catch (Exception e) {
-            throw UnifiedException.gen(Constants.MODULE, "取值" + this.target.getName() + "出错", e);
+            throw UnifiedException.gen(Constants.MODULE, "取值" +
+                    this.target.getName() + "-" + method.getName() + "出错", e);
+        }
+    }
+
+    private void validExcelParseField(@NonNull ExcelParseField excelParseField, @NonNull Class fieldType) {
+        if (excelParseField.startIndex() == Integer.MIN_VALUE && excelParseField.cellIndex() == Integer.MIN_VALUE) {
+            throw UnifiedException.gen(Constants.MODULE, "列范围或者指定列不能同时为空");
+        }
+        if (excelParseField.startIndex() != Integer.MIN_VALUE && excelParseField.cellIndex() != Integer.MIN_VALUE) {
+            throw UnifiedException.gen(Constants.MODULE, "列范围或者指定列不能同时指定");
+        }
+        List<Class> classes = Arrays.asList(
+                String.class, Date.class, Integer.class,
+                Long.class, BigDecimal.class, Boolean.class,
+                boolean.class, int.class, long.class);
+        if (excelParseField.startIndex() != Integer.MIN_VALUE) {
+            if (excelParseField.endIndex() < 0) {
+                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，endIndex 不能小于0");
+            }
+            if (excelParseField.startIndex() >= excelParseField.endIndex()) {
+                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，endIndex 不能小于等于 startIndex");
+            }
+            if (fieldType != List.class) {
+                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，属性必须是 list 类型");
+            }
+            if (!classes.contains(excelParseField.dataType()) && !TypeUtil.isAssignableFrom(BaseEnum.class, excelParseField.dataType())) {
+                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，dataType 属性类型不合法");
+            }
+        }
+        if (excelParseField.cellIndex() != Integer.MIN_VALUE) {
+            if (!classes.contains(fieldType) && !TypeUtil.isAssignableFrom(BaseEnum.class, fieldType)) {
+                throw UnifiedException.gen(Constants.MODULE, "指定列，属性类型不合法");
+            }
         }
     }
 
