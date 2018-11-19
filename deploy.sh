@@ -13,9 +13,9 @@ mvn versions:set -DnewVersion=404.0.0-SNAPSHOT
 mvn versions:commit
 
 # 发布 jar
-# -am 表示同时处理选定模块所依赖的模块
+# -am 表示同时处理 选定模块所依赖的模块
 # -pl 选项后可跟随{groupId}:{artifactId}或者所选模块的相对路径(多个模块以逗号分隔)
-# -amd 表示同时处理依赖选定模块的模块
+# -amd 表示同时处理 依赖选定模块的模块
 # -N 表示不递归子模块
 mvn clean install -Dmaven.test.skip=true -am -pl sf-house-bean,sf-house-aop
 
