@@ -33,4 +33,6 @@ public class ReaderSheetVO implements Serializable {
     private List<String> fixed2end;
     @ExcelParseField(startIndex = 2, endIndex = Integer.MAX_VALUE, dataType = String.class, required = false)
     private List<String> fixed2last;
+    @ExcelParseField(cellIndex = {1, 2}, dataType = Long.class, required = false)
+    private List<Long> fixed;
 }

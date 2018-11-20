@@ -23,10 +23,8 @@ import sf.house.excel.strategy.RequireCheckStrategy;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by nijianfeng on 2018/8/26.
@@ -117,30 +115,36 @@ public class ExcelParse extends ExcelSession {
         }
         String sheetName = this.sheet.getSheetName();
         int rowNum = row.getRowNum() + 1;
-        int startIndex;
-        int endIndex;
-        Class dataType;
         for (int i = 0; i < targetClazz.getFields().size(); i++) {
             ExcelParseField excelField = targetClazz.getExcelParseFields().get(i);
             String title = excelField.title();
-            if (excelField.cellIndex() != Integer.MIN_VALUE) {
-                startIndex = excelField.cellIndex();
-                endIndex = excelField.cellIndex();
-                dataType = targetClazz.getFieldTypes().get(i);
+            Class dataType;
+            List<Integer> cellIndexs = Lists.newArrayList();
+            if (excelField.cellIndex().length != 0) {
+                cellIndexs.addAll(Arrays.stream(excelField.cellIndex()).boxed().collect(Collectors.toList()));
+                if (excelField.cellIndex().length == 1) {
+                    dataType = targetClazz.getFieldTypes().get(i);
+                } else {
+                    dataType = excelField.dataType();
+                }
             } else if (excelField.startIndex() != Integer.MIN_VALUE) {
-                startIndex = excelField.startIndex();
+                int startIndex = excelField.startIndex();
+                int endIndex;
                 if (excelField.endIndex() == Integer.MAX_VALUE) {
                     // row.getLastCellNum() 不是从0开始的
                     endIndex = row.getLastCellNum() - 1;
                 } else {
                     endIndex = excelField.endIndex();
                 }
+                for (int cellIndex = startIndex; cellIndex <= endIndex; cellIndex++) {
+                    cellIndexs.add(cellIndex);
+                }
                 dataType = excelField.dataType();
             } else {
                 continue;
             }
             List<Object> values = Lists.newArrayList();
-            for (int cellIndex = startIndex; cellIndex <= endIndex; cellIndex++) {
+            for (Integer cellIndex : cellIndexs) {
                 if (row.getLastCellNum() <= cellIndex) {
                     continue;
                 }
@@ -168,12 +172,19 @@ public class ExcelParse extends ExcelSession {
                 }
                 values.add(value);
             }
+            if (excelField.ignoreNull()) {
+                values.removeAll(Collections.singleton(null));
+            }
             // 利用反射赋值
             if (excelParseException.isEmptyInfo()) {
-                if (values.size() != 0) {
-                    targetClazz.setFieldValue(targetClazz.getSetFieldMethods().get(i), result,
-                            values.size() == 1 ? values.get(0) : values);
+                if (targetClazz.getFieldTypes().get(i) == List.class) {
+                    targetClazz.setFieldValue(targetClazz.getSetFieldMethods().get(i), result, values);
+                } else {
+                    if (values.size() == 1) {
+                        targetClazz.setFieldValue(targetClazz.getSetFieldMethods().get(i), result, values.get(0));
+                    }
                 }
+
             }
         }
         if (!excelParseException.isEmptyInfo()) {
@@ -184,6 +195,9 @@ public class ExcelParse extends ExcelSession {
 
     private Object getFieldValue(String currentValue, Class fieldTypeClass, ExcelParseField excelAnnotation,
                                  ExcelParseException exp, ExcelParseExceptionInfo expInfo) {
+        if (currentValue == null) {
+            return null;
+        }
         try {
             Object value;
             if (TypeUtil.isAssignableFrom(BaseEnum.class, fieldTypeClass)) {

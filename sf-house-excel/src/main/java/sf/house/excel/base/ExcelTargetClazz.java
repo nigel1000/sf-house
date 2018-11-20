@@ -24,7 +24,8 @@ import java.util.List;
 public class ExcelTargetClazz<C> {
 
     public enum ClazzType {
-        FIELD_PARSE, FIELD_EXPORT,;
+        FIELD_PARSE, FIELD_EXPORT,
+        ;
     }
 
     private Class<C> target;
@@ -103,33 +104,41 @@ public class ExcelTargetClazz<C> {
     }
 
     private void validExcelParseField(@NonNull ExcelParseField excelParseField, @NonNull Class fieldType) {
-        if (excelParseField.startIndex() == Integer.MIN_VALUE && excelParseField.cellIndex() == Integer.MIN_VALUE) {
-            throw UnifiedException.gen(Constants.MODULE, "列范围或者指定列不能同时为空");
+        if (excelParseField.startIndex() == Integer.MIN_VALUE && excelParseField.cellIndex().length == 0) {
+            throw UnifiedException.gen(Constants.MODULE, "范围列或者指定列不能同时为空");
         }
-        if (excelParseField.startIndex() != Integer.MIN_VALUE && excelParseField.cellIndex() != Integer.MIN_VALUE) {
-            throw UnifiedException.gen(Constants.MODULE, "列范围或者指定列不能同时指定");
+        if (excelParseField.startIndex() != Integer.MIN_VALUE && excelParseField.cellIndex().length != 0) {
+            throw UnifiedException.gen(Constants.MODULE, "范围列或者指定列不能同时指定");
         }
         List<Class> classes = Arrays.asList(
                 String.class, Date.class, Integer.class,
                 Long.class, BigDecimal.class, Boolean.class,
                 boolean.class, int.class, long.class);
+        boolean validList = false;
         if (excelParseField.startIndex() != Integer.MIN_VALUE) {
             if (excelParseField.endIndex() < 0) {
-                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，endIndex 不能小于0");
+                throw UnifiedException.gen(Constants.MODULE, "范围列时，endIndex 不能小于0");
             }
             if (excelParseField.startIndex() >= excelParseField.endIndex()) {
-                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，endIndex 不能小于等于 startIndex");
+                throw UnifiedException.gen(Constants.MODULE, "范围列时，endIndex 不能小于等于 startIndex");
             }
-            if (fieldType != List.class) {
-                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，属性必须是 list 类型");
-            }
-            if (!classes.contains(excelParseField.dataType()) && !TypeUtil.isAssignableFrom(BaseEnum.class, excelParseField.dataType())) {
-                throw UnifiedException.gen(Constants.MODULE, "指定范围列时，dataType 属性类型不合法");
+            validList = true;
+        }
+        if (excelParseField.cellIndex().length != 0) {
+            if (excelParseField.cellIndex().length == 1) {
+                if (!classes.contains(fieldType) && !TypeUtil.isAssignableFrom(BaseEnum.class, fieldType)) {
+                    throw UnifiedException.gen(Constants.MODULE, "指定列时，dataType 属性类型不合法");
+                }
+            } else {
+                validList = true;
             }
         }
-        if (excelParseField.cellIndex() != Integer.MIN_VALUE) {
-            if (!classes.contains(fieldType) && !TypeUtil.isAssignableFrom(BaseEnum.class, fieldType)) {
-                throw UnifiedException.gen(Constants.MODULE, "指定列，属性类型不合法");
+        if (validList) {
+            if (fieldType != List.class) {
+                throw UnifiedException.gen(Constants.MODULE, "指定多列时，属性必须是 list 类型");
+            }
+            if (!classes.contains(excelParseField.dataType()) && !TypeUtil.isAssignableFrom(BaseEnum.class, excelParseField.dataType())) {
+                throw UnifiedException.gen(Constants.MODULE, "指定多列时，dataType 属性类型不合法");
             }
         }
     }
