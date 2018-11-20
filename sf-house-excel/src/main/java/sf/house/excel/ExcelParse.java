@@ -145,9 +145,6 @@ public class ExcelParse extends ExcelSession {
             }
             List<Object> values = Lists.newArrayList();
             for (Integer cellIndex : cellIndexs) {
-                if (row.getLastCellNum() <= cellIndex) {
-                    continue;
-                }
                 int colNum = cellIndex + 1;
                 Object value = null;
                 String currentValue;
