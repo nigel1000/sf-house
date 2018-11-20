@@ -29,7 +29,7 @@ public @interface ExcelParseField {
 
     Class dataType() default String.class;
 
-    boolean ignoreNull() default true;
+    boolean ignoreNull() default false;
 
     // excel的title
     String title() default "";

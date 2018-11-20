@@ -1,5 +1,6 @@
 package sf.house.excel;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -379,6 +380,16 @@ public class ExcelSession {
         }
         return 1;
     }
+
+    public Map<Integer, String> getRowValueMap(@NonNull Row row) {
+        Map<Integer, String> ret = Maps.newHashMap();
+        // row.getLastCellNum() 不是从0开始的
+        int lastCellNum = row.getLastCellNum();
+        for (int cellIndex = 0; cellIndex < lastCellNum; cellIndex++) {
+            ret.put(cellIndex, getCellValue(row.getRowNum(), cellIndex));
+        }
+        return ret;
+    }
     ///////////////////////////////// row&col////////////////////////////////
 
 
@@ -458,7 +469,7 @@ public class ExcelSession {
         Sheet toSheet = createSheet(name);
         // 合并区域处理
         copyMergerRegion(fromSheet, toSheet);
-        for (Iterator rowIt = fromSheet.rowIterator(); rowIt.hasNext();) {
+        for (Iterator rowIt = fromSheet.rowIterator(); rowIt.hasNext(); ) {
             Row fromRow = (Row) rowIt.next();
             Row toRow = toSheet.createRow(fromRow.getRowNum());
             // 行复制
@@ -470,7 +481,7 @@ public class ExcelSession {
     public void copyRow(Sheet fromSheet, Sheet toSheet, Row fromRow, Row toRow, boolean isCopyValue) {
         // 设置行高
         toRow.setHeight(fromRow.getHeight());
-        for (Iterator cellIt = fromRow.cellIterator(); cellIt.hasNext();) {
+        for (Iterator cellIt = fromRow.cellIterator(); cellIt.hasNext(); ) {
             Cell fromCell = (Cell) cellIt.next();
             Cell toCell = toRow.createCell(fromCell.getColumnIndex());
             copyCell(fromSheet, toSheet, fromCell, toCell, isCopyValue);

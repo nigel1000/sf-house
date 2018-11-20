@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by nijianfeng on 2018/8/26.
@@ -114,49 +113,30 @@ public class ExcelParse extends ExcelSession {
             return result;
         }
         String sheetName = this.sheet.getSheetName();
+        Map<Integer, String> rowMap = getRowValueMap(row);
         int rowNum = row.getRowNum() + 1;
-        // row.getLastCellNum() 不是从0开始的
         int lastCellNum = row.getLastCellNum();
         for (int i = 0; i < targetClazz.getFields().size(); i++) {
+            Class fieldType = targetClazz.getFieldTypes().get(i);
             ExcelParseField excelField = targetClazz.getExcelParseFields().get(i);
             String title = excelField.title();
-            Class dataType;
-            List<Integer> cellIndexs = Lists.newArrayList();
-            if (excelField.cellIndex().length != 0) {
-                cellIndexs.addAll(Arrays.stream(excelField.cellIndex()).boxed().collect(Collectors.toList()));
-                if (excelField.cellIndex().length == 1) {
-                    dataType = targetClazz.getFieldTypes().get(i);
-                } else {
-                    dataType = excelField.dataType();
-                }
-            } else if (excelField.startIndex() != Integer.MIN_VALUE) {
-                int startIndex = excelField.startIndex();
-                int endIndex;
-                if (excelField.endIndex() == Integer.MAX_VALUE) {
-                    endIndex = lastCellNum - 1;
-                } else {
-                    endIndex = excelField.endIndex();
-                }
-                for (int cellIndex = startIndex; cellIndex <= endIndex; cellIndex++) {
-                    cellIndexs.add(cellIndex);
-                }
-                dataType = excelField.dataType();
-            } else {
+            List<Integer> cellIndexes = targetClazz.getCellIndexes(i, lastCellNum);
+            if (CollectionUtils.isEmpty(cellIndexes)) {
                 continue;
             }
             List<Object> values = Lists.newArrayList();
-            for (Integer cellIndex : cellIndexs) {
+            for (Integer cellIndex : cellIndexes) {
                 int colNum = cellIndex + 1;
                 Object value = null;
-                String currentValue;
+                String currentValue = rowMap.get(cellIndex);
                 // 获取数据并转换类型
-                Cell cell = getCell(row.getRowNum(), cellIndex);
-                currentValue = getCellValue(cell.getRowIndex(), cellIndex);
                 if (Constants.isNotEmpty(currentValue)) {
                     try {
                         ExcelParseExceptionInfo expInfo = ExcelParseExceptionInfo.builder().columnName(title).rowNum(rowNum)
                                 .sheetName(sheetName).colNum(colNum).currentValue(currentValue).build();
-                        value = getFieldValue(currentValue, dataType, excelField, excelParseException, expInfo);
+                        value = getFieldValue(currentValue,
+                                (fieldType == List.class) ? excelField.dataType() : fieldType,
+                                excelField, excelParseException, expInfo);
                     } catch (Exception e) {
                         log.debug(Constants.MODULE, e);
                         continue;

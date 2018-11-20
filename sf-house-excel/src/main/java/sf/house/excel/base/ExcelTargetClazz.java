@@ -1,5 +1,6 @@
 package sf.house.excel.base;
 
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.NonNull;
 import sf.house.bean.excps.UnifiedException;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by hznijianfeng on 2018/8/28.
@@ -101,6 +103,26 @@ public class ExcelTargetClazz<C> {
             throw UnifiedException.gen(Constants.MODULE, "取值" +
                     this.target.getName() + "-" + method.getName() + "出错", e);
         }
+    }
+
+    public List<Integer> getCellIndexes(Integer fieldIndex, Integer rowMaxCellIndex) {
+        List<Integer> cellIndexes = Lists.newArrayList();
+        ExcelParseField excelField = this.getExcelParseFields().get(fieldIndex);
+        if (excelField.cellIndex().length != 0) {
+            cellIndexes.addAll(Arrays.stream(excelField.cellIndex()).boxed().collect(Collectors.toList()));
+        } else if (excelField.startIndex() != Integer.MIN_VALUE) {
+            int startIndex = excelField.startIndex();
+            int endIndex;
+            if (excelField.endIndex() == Integer.MAX_VALUE) {
+                endIndex = rowMaxCellIndex - 1;
+            } else {
+                endIndex = excelField.endIndex();
+            }
+            for (int cellIndex = startIndex; cellIndex <= endIndex; cellIndex++) {
+                cellIndexes.add(cellIndex);
+            }
+        }
+        return cellIndexes;
     }
 
     private void validExcelParseField(@NonNull ExcelParseField excelParseField, @NonNull Class fieldType) {
