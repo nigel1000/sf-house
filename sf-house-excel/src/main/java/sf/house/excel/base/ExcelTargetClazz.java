@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 public class ExcelTargetClazz<C> {
 
     public enum ClazzType {
-        FIELD_PARSE, FIELD_EXPORT,
-        ;
+        FIELD_PARSE,
+        FIELD_EXPORT,;
     }
 
     private Class<C> target;
@@ -138,8 +138,8 @@ public class ExcelTargetClazz<C> {
                 boolean.class, int.class, long.class);
         boolean validList = false;
         if (excelParseField.startIndex() != Integer.MIN_VALUE) {
-            if (excelParseField.endIndex() < 0) {
-                throw UnifiedException.gen(Constants.MODULE, "范围列时，endIndex 不能小于0");
+            if (excelParseField.endIndex() < 0 || excelParseField.startIndex() < 0) {
+                throw UnifiedException.gen(Constants.MODULE, "范围列时，endIndex或者endIndex 不能小于0");
             }
             if (excelParseField.startIndex() >= excelParseField.endIndex()) {
                 throw UnifiedException.gen(Constants.MODULE, "范围列时，endIndex 不能小于等于 startIndex");
