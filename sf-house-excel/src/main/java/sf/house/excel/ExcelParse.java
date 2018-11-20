@@ -115,6 +115,8 @@ public class ExcelParse extends ExcelSession {
         }
         String sheetName = this.sheet.getSheetName();
         int rowNum = row.getRowNum() + 1;
+        // row.getLastCellNum() 不是从0开始的
+        int lastCellNum = row.getLastCellNum();
         for (int i = 0; i < targetClazz.getFields().size(); i++) {
             ExcelParseField excelField = targetClazz.getExcelParseFields().get(i);
             String title = excelField.title();
@@ -131,8 +133,7 @@ public class ExcelParse extends ExcelSession {
                 int startIndex = excelField.startIndex();
                 int endIndex;
                 if (excelField.endIndex() == Integer.MAX_VALUE) {
-                    // row.getLastCellNum() 不是从0开始的
-                    endIndex = row.getLastCellNum() - 1;
+                    endIndex = lastCellNum - 1;
                 } else {
                     endIndex = excelField.endIndex();
                 }
