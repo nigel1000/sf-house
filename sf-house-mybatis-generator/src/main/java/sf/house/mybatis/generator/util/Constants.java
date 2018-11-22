@@ -61,6 +61,7 @@ public class Constants {
         typeMap.put("varchar", "String");
         typeMap.put("char", "String");
         typeMap.put("mediumtext", "String");
+        typeMap.put("text", "String");
 
         typeMap.put("tinyint", "Integer");
         typeMap.put("smallint", "Integer");
