@@ -28,7 +28,11 @@ public class DeleteHandler implements RedisCacheHandler {
 
         Object result = point.proceed();
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
-        String key = clazzMeta.getKeyDiy() + clazzMeta.getKeyAuto();
+        // keyDiy 不能为空
+        if (StringUtils.isBlank(clazzMeta.getKeyDiy())) {
+            return result;
+        }
+        String key = clazzMeta.getKey();
         if (StringUtils.isBlank(key)) {
             return result;
         }

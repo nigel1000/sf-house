@@ -37,22 +37,23 @@ public class BatchGetSetHandler implements RedisCacheHandler {
     @SuppressWarnings("unchecked")
     public Object handle(ProceedingJoinPoint point, RedisCache redisCache) throws Throwable {
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
-        if (redisCache.keyAuto().length != 1 || clazzMeta.getArgs().length < 1) {
+        // keyAuto 的大小必须等于1
+        if (clazzMeta.getKeyAuto().length != 1 || clazzMeta.getArgs().length < 1) {
             return point.proceed();
         }
-        if (!TypeUtil.isAssignableFrom(List.class, clazzMeta.getArgs()[redisCache.keyAuto()[0]].getClass())) {
+        if (!TypeUtil.isAssignableFrom(List.class, clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]].getClass())) {
             return point.proceed();
         }
         if (!TypeUtil.isAssignableFrom(Map.class, clazzMeta.getReturnType())) {
             return point.proceed();
         }
-        Set<Object> keys = Sets.newHashSet((List<Object>) (clazzMeta.getArgs()[redisCache.keyAuto()[0]]));
+        Set<Object> keys = Sets.newHashSet((List<Object>) (clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]]));
         // 如果List<key>为空，则走getPutWithExpireHandler
         if (CollectionUtils.isEmpty(keys)) {
             return getSetWithExpireHandler.handle(point, redisCache);
         }
         Map<Object, Object> ret = Maps.newHashMap();
-        String keyPrefix = clazzMeta.diyKey();
+        String keyPrefix = clazzMeta.getPrefixKey();
         List<RedisKey> redisKeys = Lists.newArrayList();
         for (Object key : keys) {
             redisKeys.add(RedisKey.createKey(keyPrefix + String.valueOf(key) + "_"));
@@ -82,7 +83,7 @@ public class BatchGetSetHandler implements RedisCacheHandler {
             }
             // get no cache data
             if (CollectionUtils.isNotEmpty(noCache)) {
-                clazzMeta.getArgs()[redisCache.keyAuto()[0]] = noCache;
+                clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]] = noCache;
                 Map<Object, Object> fromBiz = (Map<Object, Object>) clazzMeta.getPoint().proceed(clazzMeta.getArgs());
                 // put cache
                 if (MapUtils.isNotEmpty(fromBiz)) {

@@ -15,8 +15,13 @@ public class Delete {
 
     @RedisCache(redisPair = RedisPair.DELETE, keyAuto = {0, 1},
             keyDiy = "sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto")
-    public void delete(int time, int hour) {
-        log.info("enter delete");
+    public void getSetWithExpireAuto(int time, int hour) {
+        log.info("enter getSetWithExpireAuto delete");
+    }
+
+    @RedisCache(redisPair = RedisPair.DELETE, keyAuto = {0, 1}, keyDiy = "diy")
+    public void getSetWithExpireDiy(int time, int hour) {
+        log.info("enter getSetWithExpireDiy delete");
     }
 
 }

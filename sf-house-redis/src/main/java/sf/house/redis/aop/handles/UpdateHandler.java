@@ -29,7 +29,7 @@ public class UpdateHandler implements RedisCacheHandler {
 
         Object result = point.proceed();
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
-        String key = clazzMeta.getKeyDiy() + clazzMeta.getKeyAuto();
+        String key = clazzMeta.getKey();
         if (StringUtils.isBlank(key)) {
             return result;
         }

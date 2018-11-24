@@ -12,17 +12,19 @@ import sf.house.redis.base.Constants;
 
 @Component
 @Slf4j
+
 public class GetSetWithExpire {
 
     @RedisCache(redisPair = RedisPair.GET_SET_WITH_EXPIRE, expireTime = Constants.ONE_SECOND * 5, keyAuto = {0, 1})
     public boolean getSetWithExpireAuto(int time, int hour) {
-        log.info("enter getPutWithExpireAuto");
+        log.info("enter getSetWithExpireAuto");
         return true;
     }
 
-    @RedisCache(redisPair = RedisPair.GET_SET_WITH_EXPIRE, expireTime = Constants.ONE_SECOND * 5, keyDiy = "diy")
+    @RedisCache(redisPair = RedisPair.GET_SET_WITH_EXPIRE, expireTime = Constants.ONE_SECOND * 5, keyDiy = "diy",
+            keyAuto = {0, 1})
     public boolean getSetWithExpireDiy(int time, int hour) {
-        log.info("enter getPutWithExpireDiy");
+        log.info("enter getSetWithExpireDiy");
         return true;
     }
 

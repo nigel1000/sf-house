@@ -23,53 +23,42 @@ public class RedisCacheMeta implements Serializable {
 
     private String className;
     private String methodName;
-    private String prefixKey;
-    private Class<?> returnType;
+    private Class returnType;
     private Object[] args;
-    private SerializeEnum serializeEnum;
-    private String keyAuto;
+    private String prefixKey;
+    private String suffixKey;
+    private String key;
+    private int[] keyAuto;
     private String keyDiy;
-    private String key; // keyDiy 有则使用 prefixKey + keyDiy，否则使用 prefixKey + keyAuto
     private Integer expireTime;
+
+    private SerializeEnum serializeEnum;
 
     public RedisCacheMeta(ProceedingJoinPoint point, RedisCache redisCache) {
 
         this.point = point;
         this.redisCache = redisCache;
-
+        this.serializeEnum = redisCache.serializeEnum();
         this.className = point.getTarget().getClass().getName();
         this.methodName = point.getSignature().getName();
-        this.prefixKey = this.className + "_" + this.methodName + "_";
-        this.returnType = ((MethodSignature) point.getSignature()).getReturnType();
-        this.args = point.getArgs();
-        this.serializeEnum = redisCache.serializeEnum();
-
-        StringBuilder keyAuto = new StringBuilder();
-        int[] argKeys = redisCache.keyAuto();
-        for (int argKey : argKeys) {
-            if (argKey < this.args.length) {
-                keyAuto.append(String.valueOf(this.args[argKey])).append("_");
-            }
-        }
-        this.keyAuto = keyAuto.toString();
 
         this.keyDiy = redisCache.keyDiy();
         if (StringUtils.isNotBlank(this.keyDiy)) {
-            this.keyDiy = this.keyDiy + "_";
-            this.key = diyKey();
+            this.prefixKey = this.keyDiy + "_";
         } else {
-            this.key = autoKey();
+            this.prefixKey = this.className + "_" + this.methodName + "_";
         }
-
+        this.returnType = ((MethodSignature) point.getSignature()).getReturnType();
+        this.args = point.getArgs();
+        this.keyAuto = redisCache.keyAuto();
+        StringBuilder keyAutoArgs = new StringBuilder();
+        for (int index : keyAuto) {
+            if (index < this.args.length) {
+                keyAutoArgs.append(String.valueOf(this.args[index])).append("_");
+            }
+        }
+        this.suffixKey = keyAutoArgs.toString();
+        this.key = this.prefixKey + this.suffixKey;
         this.expireTime = redisCache.expireTime() + (int) (Math.random() * 10);
     }
-
-    public String autoKey() {
-        return this.prefixKey + this.keyAuto;
-    }
-
-    public String diyKey() {
-        return this.prefixKey + this.keyDiy;
-    }
-
 }

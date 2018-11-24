@@ -17,8 +17,14 @@ public class BatchDelete {
 
     @RedisCache(redisPair = RedisPair.BATCH_DELETE, keyAuto = {0},
             keyDiy = "sf.house.redis.test.demo.BatchGetSet_getBatchGetSet")
-    public void batchDelete(List<Integer> keys) {
+    public void getBatchGetSet(List<Integer> keys) {
         log.info("enter batchDelete！ {}", keys);
     }
+
+    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keyAuto = {0}, keyDiy = "getBatchGetSetDiffDiy")
+    public void getBatchGetSetDiff(List<Integer> keys) {
+        log.info("enter batchDelete！ {}", keys);
+    }
+
 
 }

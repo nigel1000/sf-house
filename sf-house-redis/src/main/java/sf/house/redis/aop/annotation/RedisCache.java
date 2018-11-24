@@ -23,13 +23,8 @@ public @interface RedisCache {
 
     int expireTime() default Constants.ONE_MINUTE;
 
-    // keyDiy为空时：
-    // key为args[index]的toString组合
-    // 前缀为：类名_方法名_
     int[] keyAuto() default {};
 
-    // 优先使用diy
-    // 自定义key不为空则keyAuto配置失效
     String keyDiy() default "";
 
     String failTips() default "";

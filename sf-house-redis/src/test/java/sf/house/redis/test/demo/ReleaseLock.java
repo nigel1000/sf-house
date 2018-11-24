@@ -21,7 +21,7 @@ public class ReleaseLock {
         return true;
     }
 
-    @RedisCache(redisPair = RedisPair.LOCK_RELEASE, expireTime = Constants.ONE_SECOND * 5, keyDiy = "diy")
+    @RedisCache(redisPair = RedisPair.LOCK_RELEASE, expireTime = Constants.ONE_SECOND * 5, keyDiy = "releaseLockDiy", keyAuto = {0, 1})
     public boolean releaseLockDiy(int time, int hour) {
         log.info("enter diy lock release！");
         try {
