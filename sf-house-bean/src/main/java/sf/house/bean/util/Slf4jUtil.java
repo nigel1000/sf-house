@@ -89,10 +89,10 @@ public class Slf4jUtil {
             return;
         }
         String loggerLevel = loggerLevelMap.get(loggerName);
-        if (loggerLevel == null) {
-            return;
+        if (loggerLevel != null) {
+            loggerLevel = loggerLevel.toLowerCase();
         }
-        setLogLevel(loggerName, loggerLevel.toLowerCase());
+        setLogLevel(loggerName, loggerLevel);
     }
 
     public static void recovery() {
