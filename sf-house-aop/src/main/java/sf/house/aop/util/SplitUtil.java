@@ -7,6 +7,7 @@ import lombok.NonNull;
 import sf.house.bean.util.FunctionUtil;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -62,15 +63,8 @@ public class SplitUtil {
         return joiner(COLON_SPECIAL).join(list);
     }
 
-    /**
-     * 批处理限流
-     *
-     * @param objList
-     * @param everyTimeSize
-     * @param execute
-     * @param <T>
-     */
-    public static <T> void splitExecute(List<T> objList, int everyTimeSize, Execute<T> execute) {
+    // 批处理限流
+    public static <T> void splitExecute(List<T> objList, int everyTimeSize, Consumer<List<T>> execute) {
         if (objList == null || objList.size() == 0) {
             return;
         }
@@ -78,14 +72,23 @@ public class SplitUtil {
         for (int i = 0; i < totalPage; i++) {
             int fromIndex = i * everyTimeSize;
             int toIndex = Math.min((i + 1) * everyTimeSize, objList.size());
-            execute.execute(objList.subList(fromIndex, toIndex));
+            execute.accept(objList.subList(fromIndex, toIndex));
         }
     }
 
-    @FunctionalInterface
-    public interface Execute<P> {
-
-        void execute(List<P> params);
+    public static <T, R> void splitExecute(List<T> objList, int everyTimeSize, Function<List<T>, R> execute, R breakFlag) {
+        if (objList == null || objList.size() == 0) {
+            return;
+        }
+        int totalPage = (objList.size() + everyTimeSize - 1) / everyTimeSize;
+        for (int i = 0; i < totalPage; i++) {
+            int fromIndex = i * everyTimeSize;
+            int toIndex = Math.min((i + 1) * everyTimeSize, objList.size());
+            R result = execute.apply(objList.subList(fromIndex, toIndex));
+            if (result == breakFlag || (result != null && result.equals(breakFlag))) {
+                break;
+            }
+        }
     }
 
 
