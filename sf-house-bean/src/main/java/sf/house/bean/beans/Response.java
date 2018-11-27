@@ -20,41 +20,42 @@ public class Response<T> implements Serializable {
 
     private Response(int code, T data, Object desc) {
         this.code = code;
-        this.success = (code == SUCCESS);
         this.result = data;
         this.error = desc;
     }
 
     public static <T> Response<T> ok() {
-        return ok(null);
-    }
-
-    public static <T> Response<T> ok(int code, T data) {
-        return ok(code, null, data);
+        return build(SUCCESS, null, null);
     }
 
     public static <T> Response<T> ok(T data) {
-        return ok(SUCCESS, null, data);
+        return build(SUCCESS, data, null);
     }
 
-    public static <T> Response<T> ok(int code, Object desc, T data) {
-        return new Response<>(code, data, desc);
+    public static <T> Response<T> ok(int code, T data) {
+        return build(code, data, null);
+    }
+
+    public static <T> Response<T> fail() {
+        return build(ERROR, null, null);
     }
 
     public static <T> Response<T> fail(Object desc) {
-        return fail(ERROR, desc, null);
+        return build(ERROR, null, desc);
     }
 
     public static <T> Response<T> fail(int code, Object desc) {
-        return fail(code, desc, null);
+        return build(code, null, desc);
     }
 
-    public static <T> Response<T> fail(Object desc, T data) {
-        return fail(ERROR, desc, data);
+    public static <T> Response<T> build(int code) {
+        return new Response<>(code, null, null);
     }
 
-    public static <T> Response<T> fail(int code, Object desc, T data) {
-        return new Response<>(code, data, desc);
+    public static <T> Response<T> build(int code, T data, Object desc) {
+        Response<T> result = new Response<>(code, data, desc);
+        result.setSuccess(code >= SUCCESS && code < 300);
+        return result;
     }
 
 }
