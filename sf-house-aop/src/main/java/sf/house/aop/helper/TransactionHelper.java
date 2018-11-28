@@ -72,10 +72,10 @@ public class TransactionHelper {
         @Override
         public void afterCommit() {
             List<Runnable> threadRunnable = runnableTasks.get();
-            log.info("afterCommit transaction successfully committed, executing {} runnables", threadRunnable.size());
+            log.info("transaction successfully committed, executing {} runnables", threadRunnable.size());
             for (int i = 0; i < threadRunnable.size(); i++) {
                 Runnable biz = threadRunnable.get(i);
-                log.info("afterCommit executing runnable:{}", i);
+                log.info("executing runnable:{}", i);
                 try {
                     ThreadPoolUtil.exec(biz);
                 } catch (Exception ex) {
@@ -86,7 +86,7 @@ public class TransactionHelper {
 
         @Override
         public void afterCompletion(int status) {
-            log.info("afterCompletion transaction completed with status {}",
+            log.info("transaction completed with status {}",
                     status == STATUS_COMMITTED ? "COMMITTED" : "ROLLED_BACK");
             runnableTasks.remove();
         }

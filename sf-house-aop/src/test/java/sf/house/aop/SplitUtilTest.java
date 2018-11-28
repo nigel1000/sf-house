@@ -22,6 +22,11 @@ public class SplitUtilTest {
 
         SplitUtil.splitExecute(Lists.newArrayList(1, 2, 3, 4, 5, 6), 2, System.out::println);
 
+        SplitUtil.splitExecute(Lists.newArrayList(1, 2, 3, 4, 5, 6), 2, (t) -> {
+            System.out.println(t);
+            return true;
+        }, true);
+
     }
 
 }
