@@ -49,7 +49,7 @@ public class Response<T> implements Serializable {
     }
 
     public static <T> Response<T> build(int code) {
-        return new Response<>(code, null, null);
+        return build(code, null, null);
     }
 
     public static <T> Response<T> build(int code, T data, Object desc) {
