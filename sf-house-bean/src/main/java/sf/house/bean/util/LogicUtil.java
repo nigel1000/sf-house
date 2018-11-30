@@ -31,6 +31,9 @@ public class LogicUtil {
             centerConfigValue = Boolean.FALSE;
         } else {
             centerConfigValue = centerConfig.get();
+            if(centerConfigValue == null){
+                centerConfigValue = Boolean.FALSE;
+            }
         }
         if (descConfigs == null) {
             return centerConfigValue;
