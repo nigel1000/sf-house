@@ -2,7 +2,7 @@ package sf.house.bean.excps;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import sf.house.bean.excps.base.CommonError;
+import sf.house.bean.beans.Response;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,11 +68,11 @@ public class UnifiedException extends RuntimeException {
     }
 
     private UnifiedException(String module, String errorMessage) {
-        this(module, CommonError.SYSTEM_ERROR.getErrorCode(), errorMessage);
+        this(module, Response.ERROR, errorMessage);
     }
 
     private UnifiedException(String module, String errorMessage, Throwable cause) {
-        this(module, CommonError.SYSTEM_ERROR.getErrorCode(), errorMessage, cause);
+        this(module, Response.ERROR, errorMessage, cause);
     }
 
     private UnifiedException(String module, int errorCode, String errorMessage) {
