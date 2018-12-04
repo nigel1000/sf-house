@@ -20,7 +20,7 @@ import java.util.Map;
 public class BatchGetSet {
 
     // key的类型和返回的map类型一样
-    @RedisCache(redisPair = RedisPair.BATCH_GET_SET, expireTime = Constants.ONE_SECOND * 5, keyAuto = {0})
+    @RedisCache(redisPair = RedisPair.BATCH_GET_SET, expireTime = Constants.ONE_SECOND * 5, keySuffixIndex = {0})
     public Map<Integer, Integer> getBatchGetSet(List<Integer> keys, int hour) {
         log.info("enter getBatchGetSet！{}", keys);
         Map<Integer, Integer> ret = Maps.newHashMap();
@@ -31,8 +31,8 @@ public class BatchGetSet {
     }
 
     // key的类型和返回的map类型不一样 key.toString 和 Map里的key必须一样才有作用
-    @RedisCache(redisPair = RedisPair.BATCH_GET_SET, keyDiy = "getBatchGetSetDiffDiy",
-            expireTime = Constants.ONE_SECOND * 5, keyAuto = {0})
+    @RedisCache(redisPair = RedisPair.BATCH_GET_SET, keyPrefix = "getBatchGetSetDiffDiy",
+            expireTime = Constants.ONE_SECOND * 5, keySuffixIndex = {0})
     public Map<String, Integer> getBatchGetSetDiff(List<Integer> keys, int hour) {
         log.info("enter getBatchGetSetDiff！ {}", keys);
         Map<String, Integer> ret = Maps.newHashMap();

@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import sf.house.aop.util.AspectUtil;
+import sf.house.bean.excps.UnifiedException;
+import sf.house.bean.util.FunctionUtil;
 import sf.house.redis.aop.annotation.RedisCache;
 import sf.house.redis.aop.enums.RedisPair;
 import sf.house.redis.aop.handles.base.RedisCacheHandler;
@@ -45,9 +47,7 @@ public class RedisCacheAspectJ {
     public Object around(final ProceedingJoinPoint point) throws Throwable {
         try {
             RedisCache[] redisCaches = AspectUtil.getAnnotationsByType(point, RedisCache.class);
-            if (!isAvailable(redisCaches)) {
-                return AspectUtil.proceed(point);
-            }
+            validAnnotations(redisCaches);
             for (RedisCache redisCache : redisCaches) {
                 RedisCacheHandler handler = redisHandlerFactory.createHandler(redisCache.redisPair());
                 Constants.SERIALIZE_ENUM.set(redisCache.serializeEnum());
@@ -60,25 +60,25 @@ public class RedisCacheAspectJ {
         }
     }
 
-    private static List<RedisPair> unSupportedMulti = Lists.newArrayList(
+    private List<RedisPair> unSupportedMulti = Lists.newArrayList(
             RedisPair.BATCH_GET_SET,
             RedisPair.GET_SET_WITH_EXPIRE,
             RedisPair.GET_SET,
             RedisPair.UPDATE);
 
-    private boolean isAvailable(RedisCache[] redisCaches) {
+    private boolean validAnnotations(RedisCache[] redisCaches) {
         if (redisCaches == null) {
-            return false;
+            throw UnifiedException.gen("缓存注解不存在");
         }
         int length = redisCaches.length;
         if (length <= 0) {
-            return false;
+            throw UnifiedException.gen("缓存注解不存在");
         } else if (length == 1) {
             return true;
         } else {
             for (RedisCache redisCache : redisCaches) {
                 if (unSupportedMulti.contains(redisCache.redisPair())) {
-                    return false;
+                    throw UnifiedException.gen("重复缓存注解不支持：" + FunctionUtil.valueList(unSupportedMulti, RedisPair::name));
                 }
             }
         }

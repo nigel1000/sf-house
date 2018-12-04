@@ -8,6 +8,7 @@ import org.apache.commons.collections.MapUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
 import sf.house.aop.util.AspectUtil;
+import sf.house.bean.excps.UnifiedException;
 import sf.house.bean.util.TypeUtil;
 import sf.house.redis.aop.annotation.RedisCache;
 import sf.house.redis.aop.base.RedisCacheMeta;
@@ -38,17 +39,16 @@ public class BatchGetSetHandler implements RedisCacheHandler {
     @SuppressWarnings("unchecked")
     public Object handle(ProceedingJoinPoint point, RedisCache redisCache) throws Throwable {
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
-        // keyAuto 的大小必须等于1
-        if (clazzMeta.getKeyAuto().length != 1 || clazzMeta.getArgs().length < 1) {
-            return AspectUtil.proceed(point);
+        if (clazzMeta.getKeySuffixIndex().length != 1 || clazzMeta.getArgs().length < 1) {
+            throw UnifiedException.gen("keySuffixIndex 的大小必须等于1,入参数量必须大于0");
         }
-        if (!TypeUtil.isAssignableFrom(List.class, clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]].getClass())) {
-            return AspectUtil.proceed(point);
+        if (!TypeUtil.isAssignableFrom(List.class, clazzMeta.getArgs()[clazzMeta.getKeySuffixIndex()[0]].getClass())) {
+            throw UnifiedException.gen("入参 args[" + clazzMeta.getKeySuffixIndex()[0] + "] 必须是 List");
         }
         if (!TypeUtil.isAssignableFrom(Map.class, clazzMeta.getReturnType())) {
-            return AspectUtil.proceed(point);
+            throw UnifiedException.gen("返回类型必须是 Map");
         }
-        Set<Object> keys = Sets.newHashSet((List<Object>) (clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]]));
+        Set<Object> keys = Sets.newHashSet((List<Object>) (clazzMeta.getArgs()[clazzMeta.getKeySuffixIndex()[0]]));
         // 如果List<key>为空，则走getPutWithExpireHandler
         if (CollectionUtils.isEmpty(keys)) {
             return getSetWithExpireHandler.handle(point, redisCache);
@@ -84,7 +84,7 @@ public class BatchGetSetHandler implements RedisCacheHandler {
             }
             // get no cache data
             if (CollectionUtils.isNotEmpty(noCache)) {
-                clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]] = noCache;
+                clazzMeta.getArgs()[clazzMeta.getKeySuffixIndex()[0]] = noCache;
                 Map<Object, Object> fromBiz = (Map<Object, Object>) clazzMeta.getPoint().proceed(clazzMeta.getArgs());
                 // put cache
                 if (MapUtils.isNotEmpty(fromBiz)) {

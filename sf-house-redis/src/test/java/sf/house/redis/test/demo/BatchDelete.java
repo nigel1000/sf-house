@@ -15,20 +15,20 @@ import java.util.List;
 @Slf4j
 public class BatchDelete {
 
-    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keyAuto = {0},
-            keyDiy = "sf.house.redis.test.demo.BatchGetSet_getBatchGetSet")
+    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keySuffixIndex = {0},
+            keyPrefix = "sf.house.redis.test.demo.BatchGetSet_getBatchGetSet")
     public void getBatchGetSet(List<Integer> keys) {
         log.info("enter batchDelete getBatchGetSet！ {}", keys);
     }
 
-    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keyAuto = {0}, keyDiy = "getBatchGetSetDiffDiy")
+    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keySuffixIndex = {0}, keyPrefix = "getBatchGetSetDiffDiy")
     public void getBatchGetSetDiff(List<Integer> keys) {
         log.info("enter batchDelete getBatchGetSetDiff！ {}", keys);
     }
 
-    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keyAuto = {0},
-            keyDiy = "sf.house.redis.test.demo.BatchGetSet_getBatchGetSet")
-    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keyAuto = {0}, keyDiy = "getBatchGetSetDiffDiy")
+    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keySuffixIndex = {0},
+            keyPrefix = "sf.house.redis.test.demo.BatchGetSet_getBatchGetSet")
+    @RedisCache(redisPair = RedisPair.BATCH_DELETE, keySuffixIndex = {0}, keyPrefix = "getBatchGetSetDiffDiy")
     public void deleteTwo(List<Integer> keys) {
         log.info("enter deleteTwo！ {}", keys);
     }

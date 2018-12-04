@@ -10,7 +10,7 @@ import sf.house.redis.base.Constants;
 @Slf4j
 public class ReleaseLock {
 
-    @RedisCache(redisPair = RedisPair.LOCK_RELEASE, expireTime = Constants.ONE_SECOND * 5, keyAuto = {0, 1})
+    @RedisCache(redisPair = RedisPair.LOCK_RELEASE, expireTime = Constants.ONE_SECOND * 5, keySuffixIndex = {0, 1})
     public boolean releaseLockAuto(int time, int hour) {
         log.info("enter auto lock release！");
         try {
@@ -21,7 +21,7 @@ public class ReleaseLock {
         return true;
     }
 
-    @RedisCache(redisPair = RedisPair.LOCK_RELEASE, expireTime = Constants.ONE_SECOND * 5, keyDiy = "releaseLockDiy", keyAuto = {0, 1})
+    @RedisCache(redisPair = RedisPair.LOCK_RELEASE, expireTime = Constants.ONE_SECOND * 5, keyPrefix = "releaseLockDiy", keySuffixIndex = {0, 1})
     public boolean releaseLockDiy(int time, int hour) {
         log.info("enter diy lock release！");
         try {

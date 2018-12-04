@@ -28,8 +28,8 @@ public class RedisCacheMeta implements Serializable {
     private String prefixKey;
     private String suffixKey;
     private String key;
-    private int[] keyAuto;
-    private String keyDiy;
+    private int[] keySuffixIndex;
+    private String keyPrefix;
     private Integer expireTime;
 
     private SerializeEnum serializeEnum;
@@ -42,22 +42,22 @@ public class RedisCacheMeta implements Serializable {
         this.className = point.getTarget().getClass().getName();
         this.methodName = point.getSignature().getName();
 
-        this.keyDiy = redisCache.keyDiy();
-        if (StringUtils.isNotBlank(this.keyDiy)) {
-            this.prefixKey = this.keyDiy + "_";
+        this.keyPrefix = redisCache.keyPrefix();
+        if (StringUtils.isNotBlank(this.keyPrefix)) {
+            this.prefixKey = this.keyPrefix + "_";
         } else {
             this.prefixKey = this.className + "_" + this.methodName + "_";
         }
         this.returnType = ((MethodSignature) point.getSignature()).getReturnType();
         this.args = point.getArgs();
-        this.keyAuto = redisCache.keyAuto();
-        StringBuilder keyAutoArgs = new StringBuilder();
-        for (int index : keyAuto) {
+        this.keySuffixIndex = redisCache.keySuffixIndex();
+        StringBuilder keySuffixStr = new StringBuilder();
+        for (int index : keySuffixIndex) {
             if (index < this.args.length) {
-                keyAutoArgs.append(String.valueOf(this.args[index])).append("_");
+                keySuffixStr.append(String.valueOf(this.args[index])).append("_");
             }
         }
-        this.suffixKey = keyAutoArgs.toString();
+        this.suffixKey = keySuffixStr.toString();
         this.key = this.prefixKey + this.suffixKey;
         this.expireTime = redisCache.expireTime() + (int) (Math.random() * 10);
     }

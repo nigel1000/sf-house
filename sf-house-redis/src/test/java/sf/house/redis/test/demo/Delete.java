@@ -13,13 +13,13 @@ import sf.house.redis.aop.enums.RedisPair;
 @Slf4j
 public class Delete {
 
-    @RedisCache(redisPair = RedisPair.DELETE, keyAuto = {0, 1},
-            keyDiy = "sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto")
+    @RedisCache(redisPair = RedisPair.DELETE, keySuffixIndex = {0, 1},
+            keyPrefix = "sf.house.redis.test.demo.GetSetWithExpire_getSetWithExpireAuto")
     public void getSetWithExpireAuto(int time, int hour) {
         log.info("enter getSetWithExpireAuto delete");
     }
 
-    @RedisCache(redisPair = RedisPair.DELETE, keyAuto = {0, 1}, keyDiy = "diy")
+    @RedisCache(redisPair = RedisPair.DELETE, keySuffixIndex = {0, 1}, keyPrefix = "diy")
     public void getSetWithExpireDiy(int time, int hour) {
         log.info("enter getSetWithExpireDiy delete");
     }

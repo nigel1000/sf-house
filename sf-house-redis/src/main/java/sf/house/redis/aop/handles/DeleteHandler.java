@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
 import sf.house.aop.util.AspectUtil;
+import sf.house.bean.excps.UnifiedException;
 import sf.house.redis.aop.annotation.RedisCache;
 import sf.house.redis.aop.base.RedisCacheMeta;
 import sf.house.redis.aop.handles.base.RedisCacheHandler;
@@ -27,17 +28,13 @@ public class DeleteHandler implements RedisCacheHandler {
     @Override
     public Object handle(ProceedingJoinPoint point, RedisCache redisCache) throws Throwable {
 
-        Object result = AspectUtil.proceed(point);
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
-        // keyDiy 不能为空
-        if (StringUtils.isBlank(clazzMeta.getKeyDiy())) {
-            return result;
+        if (StringUtils.isBlank(clazzMeta.getKeyPrefix())) {
+            throw UnifiedException.gen("keyPrefix 不能为空");
         }
-        String key = clazzMeta.getKey();
-        if (StringUtils.isBlank(key)) {
-            return result;
-        }
+        Object result = AspectUtil.proceed(point);
         // 删除缓存
+        String key = clazzMeta.getKey();
         deployClient.remove(Lists.newArrayList(RedisKey.createKey(key)));
         Constants.logDel(Lists.newArrayList(key));
         return result;

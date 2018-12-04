@@ -21,9 +21,10 @@ public @interface RedisCache {
 
     int expireTime() default Constants.ONE_MINUTE;
 
-    int[] keyAuto() default {};
+    String keyPrefix() default "";
 
-    String keyDiy() default "";
+    // args index
+    int[] keySuffixIndex() default {};
 
     String failTips() default "";
 

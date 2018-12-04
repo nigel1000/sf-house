@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
 import sf.house.aop.util.AspectUtil;
+import sf.house.bean.excps.UnifiedException;
 import sf.house.bean.util.TypeUtil;
 import sf.house.redis.aop.annotation.RedisCache;
 import sf.house.redis.aop.base.RedisCacheMeta;
@@ -30,7 +31,7 @@ public class GetSetWithExpireHandler implements RedisCacheHandler {
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
         if (!TypeUtil.isAssignableFrom(Serializable.class, clazzMeta.getReturnType())
                 && !clazzMeta.getReturnType().isPrimitive()) {
-            return AspectUtil.proceed(point);
+            throw UnifiedException.gen("返回类型必须是Serializable 或者 基本类型");
         }
         RedisKey redisKey = RedisKey.createKey(clazzMeta.getKey(), clazzMeta.getExpireTime());
         Object cache = deployClient.get(redisKey);
