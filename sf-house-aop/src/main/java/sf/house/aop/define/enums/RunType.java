@@ -10,6 +10,4 @@ public enum RunType {
 
     ;
 
-    RunType() {}
-
 }

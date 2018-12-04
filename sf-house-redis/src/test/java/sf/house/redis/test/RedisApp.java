@@ -30,9 +30,23 @@ public class RedisApp {
         log.info("################### testBatchDelete ###########################");
         testBatchDelete(applicationContext);
 
+        log.info("################### testDeleteTwo ###########################");
+        testDeleteTwo(applicationContext);
+
         log.info("################### testReleaseLock ###########################");
         testReleaseLock(applicationContext);
 
+    }
+
+    private static void testDeleteTwo(ApplicationContext applicationContext) {
+        BatchDelete batchDelete = (BatchDelete) applicationContext.getBean("batchDelete");
+        BatchGetSet batchGetSet = (BatchGetSet) applicationContext.getBean("batchGetSet");
+
+        batchGetSet.getBatchGetSet(Lists.newArrayList(1, 2, 3, 4), 2);
+        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(1, 2, 3, 4), 2);
+        batchDelete.deleteTwo(Lists.newArrayList(1, 2, 3));
+        batchGetSet.getBatchGetSet(Lists.newArrayList(1, 2, 3, 4), 2);
+        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(1, 2, 3, 4), 2);
     }
 
     private static void testBatchDelete(ApplicationContext applicationContext) {
@@ -54,9 +68,9 @@ public class RedisApp {
         batchGetSet.getBatchGetSet(Lists.newArrayList(1, 2, 3), 2);
         batchGetSet.getBatchGetSet(Lists.newArrayList(1, 2, 3, 4), 2);
 
-        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(11, 21, 31), 2);
-        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(11, 21, 31), 2);
-        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(11, 21, 31, 41), 2);
+        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(1, 2, 3), 2);
+        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(1, 2, 3), 2);
+        batchGetSet.getBatchGetSetDiff(Lists.newArrayList(1, 2, 3, 4), 2);
 
     }
 

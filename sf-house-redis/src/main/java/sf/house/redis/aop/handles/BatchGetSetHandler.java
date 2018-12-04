@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
+import sf.house.aop.util.AspectUtil;
 import sf.house.bean.util.TypeUtil;
 import sf.house.redis.aop.annotation.RedisCache;
 import sf.house.redis.aop.base.RedisCacheMeta;
@@ -39,13 +40,13 @@ public class BatchGetSetHandler implements RedisCacheHandler {
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
         // keyAuto 的大小必须等于1
         if (clazzMeta.getKeyAuto().length != 1 || clazzMeta.getArgs().length < 1) {
-            return point.proceed();
+            return AspectUtil.proceed(point);
         }
         if (!TypeUtil.isAssignableFrom(List.class, clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]].getClass())) {
-            return point.proceed();
+            return AspectUtil.proceed(point);
         }
         if (!TypeUtil.isAssignableFrom(Map.class, clazzMeta.getReturnType())) {
-            return point.proceed();
+            return AspectUtil.proceed(point);
         }
         Set<Object> keys = Sets.newHashSet((List<Object>) (clazzMeta.getArgs()[clazzMeta.getKeyAuto()[0]]));
         // 如果List<key>为空，则走getPutWithExpireHandler
@@ -97,7 +98,7 @@ public class BatchGetSetHandler implements RedisCacheHandler {
                 }
             }
         }
-        return ret;
+        return AspectUtil.setProceedResult(() -> ret);
     }
 
 }

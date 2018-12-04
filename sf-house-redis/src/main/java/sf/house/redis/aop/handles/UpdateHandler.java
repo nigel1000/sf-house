@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
+import sf.house.aop.util.AspectUtil;
 import sf.house.redis.aop.annotation.RedisCache;
 import sf.house.redis.aop.base.RedisCacheMeta;
 import sf.house.redis.aop.handles.base.RedisCacheHandler;
@@ -27,7 +28,7 @@ public class UpdateHandler implements RedisCacheHandler {
     @Override
     public Object handle(ProceedingJoinPoint point, RedisCache redisCache) throws Throwable {
 
-        Object result = point.proceed();
+        Object result = AspectUtil.proceed(point);
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
         String key = clazzMeta.getKey();
         if (StringUtils.isBlank(key)) {

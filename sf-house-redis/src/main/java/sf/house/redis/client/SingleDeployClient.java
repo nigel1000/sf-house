@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import sf.house.aop.annotation.PreDefine;
+import sf.house.aop.define.enums.RunType;
 import sf.house.aop.util.BeanUtil;
 import sf.house.bean.excps.UnifiedException;
 import sf.house.redis.base.Constants;
@@ -14,6 +16,7 @@ import sf.house.redis.client.base.JedisDeployClient;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@PreDefine(runType = {RunType.VALID})
 public class SingleDeployClient extends JedisDeployClient {
 
     private String hostName = "localhost";

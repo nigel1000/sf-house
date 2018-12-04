@@ -7,6 +7,8 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
+import sf.house.aop.annotation.PreDefine;
+import sf.house.aop.define.enums.RunType;
 import sf.house.aop.util.BeanUtil;
 import sf.house.bean.excps.UnifiedException;
 import sf.house.bean.util.FunctionUtil;
@@ -23,6 +25,7 @@ import java.util.List;
 @Data
 @Slf4j
 @EqualsAndHashCode(callSuper = false)
+@PreDefine(runType = {RunType.VALID})
 public class ClusterDeployClient extends JedisClusterDeployClient {
 
     // 部分或全部cluster节点信息

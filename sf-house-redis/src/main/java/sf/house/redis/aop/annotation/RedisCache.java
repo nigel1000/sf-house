@@ -4,10 +4,7 @@ import sf.house.redis.aop.enums.RedisPair;
 import sf.house.redis.base.Constants;
 import sf.house.redis.base.SerializeEnum;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Created by hznijianfeng on 2018/9/2.
@@ -15,6 +12,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
+@Repeatable(RedisCaches.class)
 public @interface RedisCache {
 
     RedisPair redisPair();

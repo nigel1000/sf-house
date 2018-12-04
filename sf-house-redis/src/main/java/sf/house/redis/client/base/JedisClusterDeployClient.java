@@ -18,7 +18,6 @@ import java.util.List;
  * Created by hznijianfeng on 2018/9/6.
  */
 
-@PreDefine(runType = {RunType.VALID})
 public abstract class JedisClusterDeployClient extends AbstractDeployClient {
 
     protected JedisCluster cluster;

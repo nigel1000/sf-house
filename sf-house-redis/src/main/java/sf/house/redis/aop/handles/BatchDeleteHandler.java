@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
+import sf.house.aop.util.AspectUtil;
 import sf.house.bean.util.FunctionUtil;
 import sf.house.bean.util.TypeUtil;
 import sf.house.redis.aop.annotation.RedisCache;
@@ -32,7 +33,7 @@ public class BatchDeleteHandler implements RedisCacheHandler {
     @SuppressWarnings("unchecked")
     public Object handle(ProceedingJoinPoint point, RedisCache redisCache) throws Throwable {
 
-        Object result = point.proceed();
+        Object result = AspectUtil.proceed(point);
         RedisCacheMeta clazzMeta = new RedisCacheMeta(point, redisCache);
         // keyDiy 不能为空， keyAuto 的大小必须等于1
         if (clazzMeta.getKeyAuto().length != 1 || clazzMeta.getArgs().length < 1 ||

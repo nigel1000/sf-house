@@ -54,7 +54,6 @@ public class RedisKey implements Valid, Serializable {
 
 
     @Override
-
     public void validSelf() {
         if (StringUtils.isBlank(prefixKey) && StringUtils.isBlank(suffixKey)) {
             throw UnifiedException.gen(Constants.MODULE, "缓存 key 不能为空");
