@@ -19,7 +19,38 @@ import java.util.Optional;
 @Slf4j
 public class AspectUtil {
 
-    private AspectUtil() {}
+    private AspectUtil() {
+    }
+
+    /**
+     * 递归查找目标类的所有子类的注解
+     * 方法上优先，类上次之，找到即返回
+     */
+    public static <T extends Annotation> T recursionGetAnnotation(final JoinPoint point, Class<T> annotationClass) {
+
+        if (point == null) {
+            return null;
+        }
+
+        List<Class> classes = TypeUtil.getSuperclasses(point.getTarget().getClass());
+        T result = null;
+        T candidate = null;
+        for (Class<?> clazz : classes) {
+            Method method = getMethod(point);
+            if (method != null) {
+                result = method.getAnnotation(annotationClass);
+                if (result == null) {
+                    result = clazz.getAnnotation(annotationClass);
+                }
+                if (result != null) {
+                    break;
+                }
+            } else {
+                candidate = clazz.getAnnotation(annotationClass);
+            }
+        }
+        return Optional.ofNullable(result).orElse(candidate);
+    }
 
     /**
      * 方法上优先 类上次之
@@ -63,6 +94,7 @@ public class AspectUtil {
         return method;
     }
 
+    ///////////////////////////////////////////////
     private static ThreadLocal<Object> joinPointResult = new ThreadLocal<>();
     private static ThreadLocal<Integer> hasJoinPointResult = new ThreadLocal<>();
 
@@ -89,6 +121,7 @@ public class AspectUtil {
         hasJoinPointResult.remove();
         joinPointResult.remove();
     }
+    ///////////////////////////////////////////////
 
     /**
      * 替换注解的值

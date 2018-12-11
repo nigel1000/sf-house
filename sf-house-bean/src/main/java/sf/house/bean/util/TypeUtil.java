@@ -47,14 +47,14 @@ public class TypeUtil {
         return null;
     }
 
-    public static List<Class> getAllSuperclass(Class clazz) {
+    public static List<Class> getSuperclasses(Class clazz) {
         List<Class> result = new ArrayList<>();
         result.add(clazz);
         result.addAll(Arrays.asList(clazz.getInterfaces()));
         if (clazz.equals(Object.class)) {
             return result;
         }
-        result.addAll(getAllSuperclass(clazz.getSuperclass()));
+        result.addAll(getSuperclasses(clazz.getSuperclass()));
         return result;
     }
 }
