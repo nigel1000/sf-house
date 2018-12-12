@@ -2,6 +2,7 @@ package sf.house.aop.util;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -103,11 +104,10 @@ public class AspectUtil {
 
     // 保证 point.proceed() 只执行一次
     public static Object proceed(final ProceedingJoinPoint point) throws Throwable {
-        Map<String, Integer> hasJoinPointResult = hasJoinPointResultMap.get();
         String key = point.toString();
         Map<String, Object> resultMap = Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap());
         Map<String, Integer> hasResultMap = Optional.ofNullable(hasJoinPointResultMap.get()).orElse(Maps.newHashMap());
-        if (hasJoinPointResult == null || hasJoinPointResult.get(key) == null) {
+        if (MapUtils.isEmpty(hasResultMap) || hasResultMap.get(key) == null) {
             resultMap.putIfAbsent(key, point.proceed());
             hasResultMap.putIfAbsent(key, FLAG);
             hasJoinPointResultMap.set(hasResultMap);
