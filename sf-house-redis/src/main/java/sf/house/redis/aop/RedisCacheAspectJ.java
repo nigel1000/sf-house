@@ -54,9 +54,9 @@ public class RedisCacheAspectJ {
                 handler.handle(point, redisCache);
                 Constants.SERIALIZE_ENUM.remove();
             }
-            return AspectUtil.getProceedResult();
+            return AspectUtil.getProceedResult(point);
         } finally {
-            AspectUtil.clearProceedResult();
+            AspectUtil.clearProceedResult(point);
         }
     }
 

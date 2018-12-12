@@ -47,7 +47,7 @@ public class SSHUtilTest {
 
         boolean needHold = true;
         while (needHold) {
-            Thread.sleep(1000 * 60 * 5);
+            Thread.sleep(1000 * 60 * 50);
             needHold = false;
         }
     }

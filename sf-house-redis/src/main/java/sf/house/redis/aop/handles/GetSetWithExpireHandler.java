@@ -41,6 +41,6 @@ public class GetSetWithExpireHandler implements RedisCacheHandler {
             return result;
         }
         Constants.logGet(Lists.newArrayList(redisKey.getKey()));
-        return AspectUtil.setProceedResult(() -> cache);
+        return AspectUtil.setProceedResult(() -> cache, point);
     }
 }

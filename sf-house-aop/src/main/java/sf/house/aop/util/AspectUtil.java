@@ -1,5 +1,6 @@
 package sf.house.aop.util;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,6 +11,7 @@ import sf.house.bean.util.TypeUtil;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -95,31 +97,45 @@ public class AspectUtil {
     }
 
     ///////////////////////////////////////////////
-    private static ThreadLocal<Object> joinPointResult = new ThreadLocal<>();
-    private static ThreadLocal<Integer> hasJoinPointResult = new ThreadLocal<>();
+    private static ThreadLocal<Map<String, Object>> joinPointResultMap = new ThreadLocal<>();
+    private static ThreadLocal<Map<String, Integer>> hasJoinPointResultMap = new ThreadLocal<>();
+    private static final Integer FLAG = 1;
 
     // 保证 point.proceed() 只执行一次
     public static Object proceed(final ProceedingJoinPoint point) throws Throwable {
-        Integer flag = hasJoinPointResult.get();
-        if (flag == null) {
-            hasJoinPointResult.set(1);
-            joinPointResult.set(point.proceed());
+        Map<String, Integer> hasJoinPointResult = hasJoinPointResultMap.get();
+        String key = point.toString();
+        Map<String, Object> resultMap = Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap());
+        Map<String, Integer> hasResultMap = Optional.ofNullable(hasJoinPointResultMap.get()).orElse(Maps.newHashMap());
+        if (hasJoinPointResult == null || hasJoinPointResult.get(key) == null) {
+            resultMap.putIfAbsent(key, point.proceed());
+            hasResultMap.putIfAbsent(key, FLAG);
+            hasJoinPointResultMap.set(hasResultMap);
+            joinPointResultMap.set(resultMap);
         }
-        return joinPointResult.get();
+        return resultMap.get(key);
     }
 
-    public static <E extends Throwable> Object setProceedResult(SupplierThrow<Object, E> supplier) throws E {
-        joinPointResult.set(supplier.get());
-        return joinPointResult.get();
+    public static <E extends Throwable> Object setProceedResult(SupplierThrow<Object, E> supplier,
+                                                                final ProceedingJoinPoint point) throws E {
+        String key = point.toString();
+        Object result = supplier.get();
+        Map<String, Object> resultMap = Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap());
+        resultMap.put(key, supplier.get());
+        joinPointResultMap.set(resultMap);
+        return result;
     }
 
-    public static Object getProceedResult() {
-        return joinPointResult.get();
+    public static Object getProceedResult(final ProceedingJoinPoint point) {
+        return Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap()).get(point.toString());
     }
 
-    public static void clearProceedResult() {
-        hasJoinPointResult.remove();
-        joinPointResult.remove();
+    public static void clearProceedResult(final ProceedingJoinPoint point) {
+        String key = point.toString();
+        Map<String, Object> resultMap = Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap());
+        Map<String, Integer> hasResultMap = Optional.ofNullable(hasJoinPointResultMap.get()).orElse(Maps.newHashMap());
+        resultMap.remove(key);
+        hasResultMap.remove(key);
     }
     ///////////////////////////////////////////////
 

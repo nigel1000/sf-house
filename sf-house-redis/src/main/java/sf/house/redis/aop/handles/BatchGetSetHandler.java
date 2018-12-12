@@ -98,7 +98,7 @@ public class BatchGetSetHandler implements RedisCacheHandler {
                 }
             }
         }
-        return AspectUtil.setProceedResult(() -> ret);
+        return AspectUtil.setProceedResult(() -> ret, point);
     }
 
 }
