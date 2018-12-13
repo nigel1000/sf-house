@@ -136,6 +136,12 @@ public class AspectUtil {
         Map<String, Integer> hasResultMap = Optional.ofNullable(hasJoinPointResultMap.get()).orElse(Maps.newHashMap());
         resultMap.remove(key);
         hasResultMap.remove(key);
+        if (MapUtils.isEmpty(resultMap)) {
+            joinPointResultMap.remove();
+        }
+        if (MapUtils.isEmpty(hasResultMap)) {
+            hasJoinPointResultMap.remove();
+        }
     }
     ///////////////////////////////////////////////
 
