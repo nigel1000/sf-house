@@ -69,7 +69,10 @@ public class ExcelSession {
 
     @Override
     protected void finalize() {
-        cellStyles.cleanUp();
+        if (cellStyles != null) {
+            cellStyles.cleanUp();
+            cellStyles = null;
+        }
     }
 
     public ExcelSession(@NonNull ExcelType excelType, @NonNull String sheetName) {
