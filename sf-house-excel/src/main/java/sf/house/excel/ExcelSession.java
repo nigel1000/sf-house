@@ -1,5 +1,8 @@
 package sf.house.excel;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.NonNull;
@@ -30,6 +33,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
 @Slf4j
@@ -47,7 +51,26 @@ public class ExcelSession {
     @Getter
     protected Sheet sheet;
 
-    private CellStyle defaultStyle;
+    private LoadingCache<String, CellStyle> cellStyles = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build(
+                    new CacheLoader<String, CellStyle>() {
+                        public CellStyle load(String key) {
+                            if (Constants.CELL_STYLE_DEFAULT.equals(key)) {
+                                return createDefaultCellStyle();
+                            } else if (Constants.CELL_STYLE_DEFAULT_DOUBLE.equals(key)) {
+                                return createDefaultDoubleCellStyle();
+                            } else {
+                                return createDefaultCellStyle();
+                            }
+                        }
+                    });
+
+    @Override
+    protected void finalize() {
+        cellStyles.cleanUp();
+    }
 
     public ExcelSession(@NonNull ExcelType excelType, @NonNull String sheetName) {
         if (ExcelType.XLSX.equals(excelType)) {
@@ -60,7 +83,6 @@ public class ExcelSession {
             throw UnifiedException.gen(Constants.MODULE, "没有此类型的excel");
         }
         this.sheet = createSheet(sheetName);
-        this.defaultStyle = createDefaultCellStyle();
     }
 
     public ExcelSession(@NonNull Workbook workbook, Sheet sheet) {
@@ -146,10 +168,11 @@ public class ExcelSession {
         return this.sheet.isColumnHidden(colIndex);
     }
 
+
     // 设置单元格的值
     public Cell setCellValue(int rowIndex, int colIndex, Object value) {
         Cell cell = this.getCell(rowIndex, colIndex);
-        CellStyle cellStyle = createDefaultCellStyle();
+        CellStyle cellStyle = cellStyles.getUnchecked(Constants.CELL_STYLE_DEFAULT);
         if (value == null) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue("");
@@ -163,17 +186,17 @@ public class ExcelSession {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue((Double) value);
             // 设置cell样式为定制的浮点数格式
-            cellStyle.setDataFormat(createDefaultDoubleFormat());
+            cellStyle = cellStyles.getUnchecked(Constants.CELL_STYLE_DEFAULT_DOUBLE);
         } else if (value.getClass() == Float.class || value.getClass() == float.class) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue((Float) value);
             // 设置cell样式为定制的浮点数格式
-            cellStyle.setDataFormat(createDefaultDoubleFormat());
+            cellStyle = cellStyles.getUnchecked(Constants.CELL_STYLE_DEFAULT_DOUBLE);
         } else if (value.getClass() == BigDecimal.class) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(((BigDecimal) value).doubleValue());
             // 设置cell样式为定制的浮点数格式
-            cellStyle.setDataFormat(createDefaultDoubleFormat());
+            cellStyle = cellStyles.getUnchecked(Constants.CELL_STYLE_DEFAULT_DOUBLE);
         } else if (value.getClass() == Date.class) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(this.simpleDateFormat.format((Date) value));
@@ -269,9 +292,6 @@ public class ExcelSession {
     }
 
     public CellStyle createDefaultCellStyle() {
-        if (defaultStyle != null) {
-            return defaultStyle;
-        }
         CellStyle cellStyle = workbook.createCellStyle();
         // 边框和边框颜色
         cellStyle.setBorderBottom(BorderStyle.THIN);
@@ -284,9 +304,13 @@ public class ExcelSession {
         cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
         // 指定当单元格内容显示不下时自动换行
         cellStyle.setWrapText(true);
+        return cellStyle;
+    }
 
-        this.defaultStyle = cellStyle;
-        return defaultStyle;
+    public CellStyle createDefaultDoubleCellStyle() {
+        CellStyle cellStyle = createDefaultCellStyle();
+        cellStyle.setDataFormat(this.workbook.createDataFormat().getFormat(Constants.NUMBER_FORMAT));
+        return cellStyle;
     }
 
     // 设置单元格描述
@@ -299,11 +323,6 @@ public class ExcelSession {
     public Comment getCellComment(int rowIndex, int colIndex) {
         Cell cell = this.getCell(rowIndex, colIndex);
         return cell.getCellComment();
-    }
-
-    // 获取默认的浮点数格式
-    public short createDefaultDoubleFormat() {
-        return this.workbook.createDataFormat().getFormat(Constants.NUMBER_FORMAT);
     }
 
     // 获取单元格字体大小

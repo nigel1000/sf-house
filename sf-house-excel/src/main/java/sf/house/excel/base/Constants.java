@@ -36,6 +36,11 @@ public class Constants {
     // String默认返回
     public final static String DEFAULT_RETURN_EMPTY = "";
 
+    // 本地缓存 key
+    public final static String CELL_STYLE_DEFAULT = "default";
+    public final static String CELL_STYLE_DEFAULT_DOUBLE = "double";
+
+
     public static String fillCommonPlaceholder(String value, ExcelParseExceptionInfo info) {
         return value.replace(VALUE_COMMON_PLACEHOLDER, info.getCurrentValue())
                 .replace(ROW_NUM_COMMON_PLACEHOLDER, info.getRowNum() + "")
