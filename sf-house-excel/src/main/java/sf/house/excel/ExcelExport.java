@@ -74,11 +74,31 @@ public class ExcelExport extends ExcelSession {
     /**
      * 导出数据到excel
      */
-    public <T> void export(@NonNull List<T> data, Class<T> type) {
+    public <T> void exportAll(@NonNull List<T> data, Class<T> type) {
         // 导出 title
         export(type);
         // 导出数据
         export(data, type, 1);
+    }
+
+    public <T> void exportSmart(@NonNull List<T> data, Class<T> type) {
+        // 导出数据
+        int startRowIndex = this.sheet.getLastRowNum();
+        if (startRowIndex == 0) {
+            // 导出 title
+            export(type);
+        }
+        startRowIndex++;
+        export(data, type, startRowIndex);
+    }
+
+    public <T> void exportFollow(@NonNull List<T> data, Class<T> type) {
+        // 导出数据
+        int startRowIndex = this.sheet.getLastRowNum();
+        if (startRowIndex > 0) {
+            startRowIndex++;
+        }
+        export(data, type, startRowIndex);
     }
 
     /**

@@ -78,7 +78,7 @@ public class ExcelSessionTest {
         excelExport.export(genExportData(), WriterSheetVO.class, 4);
 
         excelExport.changeSheet("测试2");
-        excelExport.export(genExportData(), WriterSheetVO.class);
+        excelExport.exportAll(genExportData(), WriterSheetVO.class);
 
         // 返回字节 可以通过response返回前端现在
         // excelSession.getBytes();
@@ -92,7 +92,7 @@ public class ExcelSessionTest {
             vos.addAll(genExportData());
         }
         ExcelExport excelExport = new ExcelExport(ExcelSession.ExcelType.XLSX, "测试1");
-        excelExport.export(vos, WriterSheetVO.class);
+        excelExport.exportAll(vos, WriterSheetVO.class);
 
         excelExport.changeSheet("测试2");
         excelExport.export(vos, WriterSheetVO.class, 4);
