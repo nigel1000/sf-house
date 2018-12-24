@@ -70,7 +70,7 @@ public class ExcelSession {
     @Override
     protected void finalize() {
         if (cellStyles != null) {
-            cellStyles.cleanUp();
+            cellStyles.invalidateAll();
             cellStyles = null;
         }
     }
