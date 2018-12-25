@@ -52,22 +52,30 @@ public class ExcelExport extends ExcelSession {
     /**
      * 导出title到excel
      */
-    public <T> void export(Class<T> type) {
+    public <T> void exportTitle(Class<T> type) {
+        exportTitle(type, 0);
+    }
+
+    /**
+     * 导出title到excel
+     */
+    public <T> void exportTitle(Class<T> type, int rowIndex) {
         // 还未创建sheet返回
         if (this.workbook == null || this.sheet == null) {
             return;
         }
         // 组装数据
         ExcelTargetClazz<T> targetClazz = new ExcelTargetClazz<>(type, ExcelTargetClazz.ClazzType.FIELD_EXPORT);
-        Row row = this.getRow(0);
+        Row row = this.getRow(rowIndex);
         // 设置标题列
         for (int i = 0; i < targetClazz.getFields().size(); i++) {
             ExcelExportField excelExportField = targetClazz.getExcelExportFields().get(i);
             int cellIndex = excelExportField.cellIndex();
             String title = excelExportField.title();
             setCellValue(row.getRowNum(), cellIndex, title);
-            // 自适应行高
-            rowHeightAutoFit(new CellRangeAddress(0, 0, 0, targetClazz.getFields().size()));
+        }
+        if (rowIndex == 0) {
+            rowHeightAutoFit(new CellRangeAddress(rowIndex, rowIndex, 0, targetClazz.getFields().size()));
         }
     }
 
@@ -76,7 +84,7 @@ public class ExcelExport extends ExcelSession {
      */
     public <T> void exportAll(@NonNull List<T> data, Class<T> type) {
         // 导出 title
-        export(type);
+        exportTitle(type);
         // 导出数据
         export(data, type, 1);
     }
@@ -87,7 +95,7 @@ public class ExcelExport extends ExcelSession {
         // 是空sheet时 导出 title
         if (startRowIndex == 0 && isRowEmpty(getRow(startRowIndex))) {
             // 导出 title
-            export(type);
+            exportTitle(type);
         }
         startRowIndex++;
         export(data, type, startRowIndex);
