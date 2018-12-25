@@ -84,7 +84,8 @@ public class ExcelExport extends ExcelSession {
     public <T> void exportSmart(@NonNull List<T> data, Class<T> type) {
         // 导出数据
         int startRowIndex = this.sheet.getLastRowNum();
-        if (startRowIndex == 0) {
+        // 是空sheet时 导出 title
+        if (startRowIndex == 0 && isRowEmpty(getRow(startRowIndex))) {
             // 导出 title
             export(type);
         }
@@ -95,7 +96,7 @@ public class ExcelExport extends ExcelSession {
     public <T> void exportFollow(@NonNull List<T> data, Class<T> type) {
         // 导出数据
         int startRowIndex = this.sheet.getLastRowNum();
-        if (startRowIndex > 0) {
+        if (startRowIndex != 0 || !isRowEmpty(getRow(0))) {
             startRowIndex++;
         }
         export(data, type, startRowIndex);

@@ -80,6 +80,22 @@ public class ExcelSessionTest {
         excelExport.changeSheet("测试2");
         excelExport.exportAll(genExportData(), WriterSheetVO.class);
 
+        excelExport.changeSheet("测试3");
+        excelExport.exportSmart(genExportData(), WriterSheetVO.class);
+        excelExport.exportSmart(genExportData(), WriterSheetVO.class);
+
+        excelExport.changeSheet("测试3-1");
+        excelExport.exportSmart(genExportData(), WriterSheetVO.class);
+        excelExport.exportSmart(genExportData(), WriterSheetVO.class);
+
+        excelExport.changeSheet("测试4");
+        excelExport.exportFollow(genExportData(), WriterSheetVO.class);
+        excelExport.exportFollow(genExportData(), WriterSheetVO.class);
+
+        excelExport.changeSheet("测试4-1");
+        excelExport.exportFollow(genExportData(), WriterSheetVO.class);
+        excelExport.exportFollow(genExportData(), WriterSheetVO.class);
+
         // 返回字节 可以通过response返回前端现在
         // excelSession.getBytes();
 
