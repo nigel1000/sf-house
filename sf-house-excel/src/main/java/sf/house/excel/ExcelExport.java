@@ -3,6 +3,7 @@ package sf.house.excel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -50,15 +51,30 @@ public class ExcelExport extends ExcelSession {
     }
 
     /**
-     * 导出title到excel
+     * 导出 数据 到 excel
+     */
+    public void exportData(List<Object> data, List<Integer> colIndex, int rowIndex) {
+        // 还未创建sheet返回
+        if (this.workbook == null || this.sheet == null) {
+            return;
+        }
+        if (CollectionUtils.isEmpty(data) || CollectionUtils.isEmpty(colIndex) || data.size() != colIndex.size()) {
+            return;
+        }
+        // 组装数据
+        Row row = this.getRow(rowIndex);
+        for (int i = 0; i < data.size(); i++) {
+            setCellValue(row.getRowNum(), colIndex.get(i), data.get(i));
+        }
+    }
+
+    /**
+     * 导出 title 到 excel
      */
     public <T> void exportTitle(Class<T> type) {
         exportTitle(type, 0);
     }
 
-    /**
-     * 导出title到excel
-     */
     public <T> void exportTitle(Class<T> type, int rowIndex) {
         // 还未创建sheet返回
         if (this.workbook == null || this.sheet == null) {
@@ -80,7 +96,7 @@ public class ExcelExport extends ExcelSession {
     }
 
     /**
-     * 导出数据到excel
+     * 通过 模型 导出 数据 到excel
      */
     public <T> void exportAll(@NonNull List<T> data, Class<T> type) {
         // 导出 title
@@ -110,9 +126,6 @@ public class ExcelExport extends ExcelSession {
         export(data, type, startRowIndex);
     }
 
-    /**
-     * 从某行开始导出到excel
-     */
     public <T> void export(@NonNull List<T> data, Class<T> type, int startRowIndex) {
         // 还未创建sheet返回
         if (this.workbook == null || this.sheet == null) {
