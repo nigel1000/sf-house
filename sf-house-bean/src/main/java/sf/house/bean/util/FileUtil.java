@@ -15,27 +15,13 @@ import java.io.*;
 public class FileUtil {
 
     public static File saveTempFile(InputStream inputStream, @NonNull String namePrefix, @NonNull String nameSuffix) {
-        ByteArrayOutputStream outStream;
-        try {
-            outStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
-            outStream.close();
-            inputStream.close();
-        } catch (Exception ex) {
-            log.error("[FileUtil][saveTempFile]", ex);
-            return null;
-        }
-        return saveTempFile(outStream.toByteArray(), namePrefix, nameSuffix);
+        return saveTempFile(getBytes(inputStream), namePrefix, nameSuffix);
     }
 
     public static File saveTempFile(@NonNull byte[] contents, @NonNull String namePrefix, @NonNull String nameSuffix) {
         File tempFile;
         try {
-            tempFile = File.createTempFile(namePrefix, nameSuffix);// 创建临时文件
+            tempFile = File.createTempFile(namePrefix, nameSuffix);
             OutputStream out = new FileOutputStream(tempFile);
             out.write(contents);
             out.flush();
@@ -50,13 +36,7 @@ public class FileUtil {
     public static File saveTempFile(@NonNull String namePrefix, @NonNull String nameSuffix) {
         File tempFile;
         try {
-            tempFile = File.createTempFile(namePrefix, nameSuffix);// 创建临时文件
-            if (!tempFile.exists()) {
-                if (tempFile.getParentFile() != null && !tempFile.getParentFile().exists()) {
-                    tempFile.getParentFile().mkdirs();
-                }
-                tempFile.createNewFile();
-            }
+            tempFile = File.createTempFile(namePrefix, nameSuffix);
         } catch (Exception ex) {
             log.error("[FileUtil][saveTempFile]", ex);
             return null;
