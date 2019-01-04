@@ -1,9 +1,6 @@
 package sf.house.model.retry.dao;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import sf.house.model.retry.RetryMsg;
 import sf.house.model.retry.api.RetryMeta;
 
@@ -15,6 +12,7 @@ import java.util.List;
 
 public interface RetryMsgMapper {
 
+    @Options(useGeneratedKeys = true, keyProperty = "retryMsg.id")
     @Insert("insert into ${retryMeta.tableName}"
             + "(id,biz_type,msg_type,msg_key,extra,body,try_times,max_try_times,init_error_message,end_error_message,status,create_at,update_at) "
             + "values "
