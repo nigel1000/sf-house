@@ -25,7 +25,7 @@ public class MySqlUtils extends DBUtils {
     private static final LoadingCache<String, Table> tableCache;
 
     static {
-        tableCache = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES)
+        tableCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
                 .build(new CacheLoader<String, Table>() {
                     @Override
                     public Table load(String tableName) throws Exception {
@@ -37,7 +37,7 @@ public class MySqlUtils extends DBUtils {
     private static final LoadingCache<String, List<String>> tableNameCache;
 
     static {
-        tableNameCache = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES)
+        tableNameCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
                 .build(new CacheLoader<String, List<String>>() {
                     @Override
                     public List<String> load(String schema) throws Exception {
@@ -46,13 +46,14 @@ public class MySqlUtils extends DBUtils {
                 });
     }
 
-
     // 获取表信息
+    @Override
     public Table getTable(String tableName) {
         return tableCache.getUnchecked(tableName);
     }
 
     // 获取库下所有表
+    @Override
     public List<String> getTableNames() {
         return tableNameCache.getUnchecked(Constants.dbSchema);
     }

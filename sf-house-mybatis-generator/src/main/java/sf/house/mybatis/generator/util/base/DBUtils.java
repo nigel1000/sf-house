@@ -17,10 +17,15 @@ public abstract class DBUtils {
 
     public abstract List<String> getTableNames();
 
+    private static Connection connection;
+
     protected synchronized static Connection getConnection() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
+            if (connection == null || connection.isClosed()) {
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
+            }
+            return connection;
         } catch (Exception e) {
             String message = "get db connection failed.";
             throw UnifiedException.gen(message);
@@ -36,7 +41,6 @@ public abstract class DBUtils {
         if (rs != null) {
             try {
                 rs.close();
-                rs = null;
             } catch (SQLException e) {
                 String message = "close rs failed.";
                 throw UnifiedException.gen(message);
@@ -46,7 +50,6 @@ public abstract class DBUtils {
         if (ps != null) {
             try {
                 ps.close();
-                ps = null;
             } catch (SQLException e) {
                 String message = "close ps failed.";
                 throw UnifiedException.gen(message);
@@ -56,7 +59,6 @@ public abstract class DBUtils {
         if (conn != null) {
             try {
                 conn.close();
-                conn = null;
             } catch (SQLException e) {
                 String message = "close conn failed.";
                 throw UnifiedException.gen(message);
