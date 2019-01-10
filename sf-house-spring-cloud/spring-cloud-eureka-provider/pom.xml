@@ -12,11 +12,6 @@
 
     <artifactId>spring-cloud-eureka-provider</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-    </properties>
-
     <dependencies>
         <!-- 引入eureka 客户端依赖 -->
         <dependency>
