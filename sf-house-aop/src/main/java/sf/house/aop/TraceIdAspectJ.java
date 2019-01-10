@@ -2,10 +2,7 @@ package sf.house.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import sf.house.aop.annotation.TraceId;
@@ -36,6 +33,16 @@ public class TraceIdAspectJ {
 
     @AfterReturning("clazz() || method()")
     public void afterReturning(final JoinPoint point) {
+
+        TraceId traceId = AspectUtil.getAnnotation(point, TraceId.class);
+        if (traceId.needClear()) {
+            TraceIdUtil.clearTraceId();
+        }
+
+    }
+
+    @AfterThrowing("clazz() || method()")
+    public void afterThrowing(final JoinPoint point) {
 
         TraceId traceId = AspectUtil.getAnnotation(point, TraceId.class);
         if (traceId.needClear()) {
