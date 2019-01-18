@@ -24,10 +24,10 @@ public class InvokerFactory {
         URL registryUrl = URL.valueOf(invokerParam.getZkAddress());
         log.info("registryUrl:[{}]", registryUrl.toFullString());
         Registry registry = registryFactory.getRegistry(registryUrl);
-        if (registry == null || !registry.isAvailable()) {
+        if (registry == null) {
             throw UnifiedException.gen("没有找到 registry, registryUrl is " + registryUrl.toFullString());
         }
-        URL url = new URL(invokerParam.getProtocol(), invokerParam.getHost(), invokerParam.getPort(), invokerParam.getMockClassName(), invokerParam.getParams());
+        URL url = new URL(invokerParam.getProtocol(), invokerParam.getHost(), invokerParam.getPort(), invokerParam.getMockClassName(), InvokerParam.getParams(invokerParam));
         log.info("url:[{}]", url.toFullString());
         try {
             List<URL> providerUrls = registry.lookup(url);
@@ -37,9 +37,9 @@ public class InvokerFactory {
                     URL providerUrl = providerUrls.get(i);
                     try {
                         ApplicationConfig applicationConfig = new ApplicationConfig();
-                        applicationConfig.setName(invokerParam.getApplicationName());
+                        applicationConfig.setName(invokerParam.getApplication());
                         ReferenceConfig<T> referenceConfig = new ReferenceConfig<>();
-                        referenceConfig.setUrl(UrlUtils.parseURL(providerUrl.getAddress(), invokerParam.getInvokerParam(providerUrl)).toString());
+                        referenceConfig.setUrl(UrlUtils.parseURL(providerUrl.getAddress(), InvokerParam.getInvokerParam(providerUrl)).toString());
                         referenceConfig.setInterface(Class.forName(providerUrl.getServiceInterface()));
                         referenceConfig.setVersion(invokerParam.getVersion());
                         referenceConfig.setApplication(applicationConfig);
