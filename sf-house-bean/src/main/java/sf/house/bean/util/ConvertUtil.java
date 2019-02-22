@@ -17,9 +17,9 @@ import java.util.Map;
 @Slf4j
 public class ConvertUtil {
 
-    public static String underline2Camel(@NonNull String underline) {
-        if(!underline.contains("_")){
-            return underline;
+    public static String underline2Camel(String underline) {
+        if (underline == null) {
+            return null;
         }
         StringBuilder result = new StringBuilder();
         String a[] = underline.split("_");
@@ -34,7 +34,10 @@ public class ConvertUtil {
         return result.toString();
     }
 
-    public static String camel2Underline(@NonNull String camel) {
+    public static String camel2Underline(String camel) {
+        if (camel == null) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder(camel);
         int temp = 0;// 定位
         // 从1开始 第一个大写不做处理
@@ -47,18 +50,24 @@ public class ConvertUtil {
         return sb.toString().toLowerCase();
     }
 
-    public static String firstLower(@NonNull String camel) {
-        if (camel.length() == 1) {
-            return camel.toLowerCase();
+    public static String firstLower(String input) {
+        if (input == null) {
+            return null;
         }
-        return camel.substring(0, 1).toLowerCase() + camel.substring(1);
+        if (input.length() == 1) {
+            return input.toLowerCase();
+        }
+        return input.substring(0, 1).toLowerCase() + input.substring(1);
     }
 
-    public static String firstUpper(@NonNull String camel) {
-        if (camel.length() == 1) {
-            return camel.toUpperCase();
+    public static String firstUpper(String input) {
+        if (input == null) {
+            return null;
         }
-        return camel.substring(0, 1).toUpperCase() + camel.substring(1);
+        if (input.length() == 1) {
+            return input.toUpperCase();
+        }
+        return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 
     public static Map<String, Object> obj2Map(Object item) {

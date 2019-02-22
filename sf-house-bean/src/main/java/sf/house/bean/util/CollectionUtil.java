@@ -25,4 +25,17 @@ public class CollectionUtil {
         return new ArrayList<>(new HashSet<>(result));
     }
 
+    public static <T> List<T> removeNull(List<T> origin) {
+        List<T> result = new ArrayList<>();
+        if (origin == null || origin.size() == 0) {
+            return result;
+        }
+        for (T t : origin) {
+            if (t != null) {
+                result.add(t);
+            }
+        }
+        return result;
+    }
+
 }
