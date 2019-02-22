@@ -3,6 +3,7 @@ package sf.house.aop;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import sf.house.aop.order.demo.OrderTest;
 import sf.house.aop.test.User;
 import sf.house.aop.test.UserDao;
 import sf.house.aop.test.ValidTest;
@@ -30,5 +31,11 @@ public class App {
         ValidTest valid = (ValidTest) applicationContext.getBean("validImpl");
         valid.valid(valid, 2);
 
+        log.info("--------------------- order ---------------------------");
+        OrderTest orderTest = (OrderTest)applicationContext.getBean("orderTest");
+        log.info("--------------------- excp ---------------------------");
+        orderTest.excp();
+        log.info("--------------------- ret ---------------------------");
+        orderTest.ret();
     }
 }
