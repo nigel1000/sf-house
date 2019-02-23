@@ -1,8 +1,5 @@
 package sf.house.mybatis.generator.util;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import sf.house.bean.excps.UnifiedException;
@@ -13,7 +10,6 @@ import sf.house.mybatis.generator.util.base.DBUtils;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by nijianfeng on 18/1/29.
@@ -22,40 +18,40 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class MySqlUtils extends DBUtils {
 
-    private static final LoadingCache<String, Table> tableCache;
-
-    static {
-        tableCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
-                .build(new CacheLoader<String, Table>() {
-                    @Override
-                    public Table load(String tableName) throws Exception {
-                        return getTableByName(tableName);
-                    }
-                });
-    }
-
-    private static final LoadingCache<String, List<String>> tableNameCache;
-
-    static {
-        tableNameCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
-                .build(new CacheLoader<String, List<String>>() {
-                    @Override
-                    public List<String> load(String schema) throws Exception {
-                        return getNameBySchema(schema);
-                    }
-                });
-    }
+//    private static final LoadingCache<String, Table> tableCache;
+//
+//    static {
+//        tableCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
+//                .build(new CacheLoader<String, Table>() {
+//                    @Override
+//                    public Table load(String tableName) throws Exception {
+//                        return getTableByName(tableName);
+//                    }
+//                });
+//    }
+//
+//    private static final LoadingCache<String, List<String>> tableNameCache;
+//
+//    static {
+//        tableNameCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES)
+//                .build(new CacheLoader<String, List<String>>() {
+//                    @Override
+//                    public List<String> load(String schema) throws Exception {
+//                        return getNameBySchema(schema);
+//                    }
+//                });
+//    }
 
     // 获取表信息
     @Override
     public Table getTable(String tableName) {
-        return tableCache.getUnchecked(tableName);
+        return getTableByName(tableName);
     }
 
     // 获取库下所有表
     @Override
     public List<String> getTableNames() {
-        return tableNameCache.getUnchecked(Constants.dbSchema);
+        return getNameBySchema(Constants.dbSchema);
     }
 
     private static List<String> getNameBySchema(String schema) {
@@ -76,25 +72,25 @@ public class MySqlUtils extends DBUtils {
         return names;
     }
 
-    private static final String SELECT_FIELD = " column_name as field,";
-    private static final String SELECT_TYPE = " data_type as type,";
-    private static final String SELECT_MEMO = " column_comment as memo,";
-    private static final String SELECT_NUMERIC_LENGTH = " numeric_precision as numericLength,";
-    private static final String SELECT_NUMERIC_SCALE = " numeric_scale as numericScale, ";
-    private static final String SELECT_IS_NULLABLE = " is_nullable as isNullable,";
-    private static final String SELECT_IS_AUTO_INCREMENT =
-            " CASE WHEN extra = 'auto_increment' THEN 'true' ELSE 'false' END as isAutoIncrement,";
-    private static final String SELECT_IS_DEFAULT = " column_default as isDefault,";
-    private static final String SELECT_CHARACTER_LENGTH = " character_maximum_length  AS characterLength ";
-    private static final String SELECT_SCHEMA = "SELECT " + SELECT_FIELD + SELECT_TYPE + SELECT_MEMO
-            + SELECT_NUMERIC_LENGTH + SELECT_NUMERIC_SCALE + SELECT_IS_NULLABLE + SELECT_IS_AUTO_INCREMENT
-            + SELECT_IS_DEFAULT + SELECT_CHARACTER_LENGTH + " FROM Information_schema.columns "
-            + "WHERE  table_schema ='" + Constants.dbSchema + "' AND table_Name = ";
 
     private static Table getTableByName(String tableName) {
         log.info("start query " + tableName + " #################################");
-        String table = "'" + tableName + "'";
-        String sql = SELECT_SCHEMA + table;
+
+        final String SELECT_FIELD = " column_name as field,";
+        final String SELECT_TYPE = " data_type as type,";
+        final String SELECT_MEMO = " column_comment as memo,";
+        final String SELECT_NUMERIC_LENGTH = " numeric_precision as numericLength,";
+        final String SELECT_NUMERIC_SCALE = " numeric_scale as numericScale, ";
+        final String SELECT_IS_NULLABLE = " is_nullable as isNullable,";
+        final String SELECT_IS_AUTO_INCREMENT =
+                " CASE WHEN extra = 'auto_increment' THEN 'true' ELSE 'false' END as isAutoIncrement,";
+        final String SELECT_IS_DEFAULT = " column_default as isDefault,";
+        final String SELECT_CHARACTER_LENGTH = " character_maximum_length  AS characterLength ";
+        final String SELECT_SCHEMA = "SELECT " + SELECT_FIELD + SELECT_TYPE + SELECT_MEMO
+                + SELECT_NUMERIC_LENGTH + SELECT_NUMERIC_SCALE + SELECT_IS_NULLABLE + SELECT_IS_AUTO_INCREMENT
+                + SELECT_IS_DEFAULT + SELECT_CHARACTER_LENGTH + " FROM Information_schema.columns "
+                + "WHERE  table_schema ='" + Constants.dbSchema + "' AND table_Name = ";
+        String sql = SELECT_SCHEMA + "'" + tableName + "'";
         log.info("execute sql: " + sql);
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -117,14 +113,14 @@ public class MySqlUtils extends DBUtils {
             }
             // 获取表描述
             ps = getConnection()
-                    .prepareStatement("SELECT table_comment FROM Information_schema.tables WHERE table_Name =" + table);
+                    .prepareStatement("SELECT table_comment FROM Information_schema.tables WHERE table_Name =" + "'" + tableName + "'");
             rs = ps.executeQuery();
             String tableComment = "无";
             while (rs.next()) {
                 tableComment = rs.getString(1);
             }
             close(rs, ps, null);
-            log.info("end " + tableName + " #################################");
+            log.info("end query " + tableName + " #################################");
             return Table.builder().fields(fields).name(tableName).comment(tableComment).build();
         } catch (Exception e) {
             closeConn();

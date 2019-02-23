@@ -121,7 +121,7 @@ public class AspectUtil {
         String key = point.toString();
         Object result = supplier.get();
         Map<String, Object> resultMap = Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap());
-        resultMap.put(key, supplier.get());
+        resultMap.put(key, result);
         joinPointResultMap.set(resultMap);
         return result;
     }

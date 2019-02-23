@@ -66,7 +66,7 @@ public class Slf4jUtil {
         }
         if (currentLog4jName.equals(LOG4J12)) {
             Log4j12Util.setLoggerLevel(logger, loggerLevel);
-        } else if (SIMPLE.equals(currentLog4jName)) {
+        } else if (currentLog4jName.equals(SIMPLE)) {
             SimpleUtil.setLoggerLevel(logger, loggerLevel);
         } else if (currentLog4jName.equals(LOGBACK)) {
             LogbackUtil.setLoggerLevel(logger, loggerLevel);
