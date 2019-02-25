@@ -7,6 +7,8 @@ import sf.house.mybatis.generator.util.Constants;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by nijianfeng on 18/1/29.
@@ -17,13 +19,16 @@ public abstract class DBUtils {
 
     public abstract List<String> getTableNames();
 
-    private static Connection connection;
+    private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
 
     protected synchronized static Connection getConnection() {
         try {
+            String key = Constants.dbUrl + Constants.dbUser;
+            Connection connection = connectionMap.get(key);
             if (connection == null || connection.isClosed()) {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection(Constants.dbUrl, Constants.dbUser, Constants.dbPwd);
+                connectionMap.put(key, connection);
             }
             return connection;
         } catch (Exception e) {
@@ -33,7 +38,7 @@ public abstract class DBUtils {
     }
 
     public static void closeConn() {
-        close(null, null, getConnection());
+        close(null, null, connectionMap.get(Constants.dbUrl + Constants.dbUser));
     }
 
     protected static void close(ResultSet rs, PreparedStatement ps, Connection conn) {
