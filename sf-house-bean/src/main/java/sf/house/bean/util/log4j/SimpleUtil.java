@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Created by nijianfeng on 2018/11/9.
  */
-public class SimpleUtil {
+class SimpleUtil {
 
     @SuppressWarnings("unchecked")
     public static void fillLoggerInfo(Map<String, Object> loggerMap, Map<String, String> loggerLevelMap) {

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by nijianfeng on 2018/11/9.
  */
-public class LogbackUtil {
+class LogbackUtil {
 
     public static void fillLoggerInfo(Map<String, Object> loggerMap, Map<String, String> loggerLevelMap) {
         LoggerContext loggerContext =

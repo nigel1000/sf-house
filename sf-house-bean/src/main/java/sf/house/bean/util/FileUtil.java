@@ -2,9 +2,8 @@ package sf.house.bean.util;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import sf.house.bean.excps.UnifiedException;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 
 /**
@@ -13,86 +12,6 @@ import java.io.*;
 
 @Slf4j
 public class FileUtil {
-
-    public static File saveTempFile(InputStream inputStream, @NonNull String namePrefix, @NonNull String nameSuffix) {
-        return saveTempFile(getBytes(inputStream), namePrefix, nameSuffix);
-    }
-
-    public static File saveTempFile(@NonNull byte[] contents, @NonNull String namePrefix, @NonNull String nameSuffix) {
-        File tempFile;
-        try {
-            tempFile = File.createTempFile(namePrefix, nameSuffix);
-            OutputStream out = new FileOutputStream(tempFile);
-            out.write(contents);
-            out.flush();
-            out.close();
-        } catch (Exception ex) {
-            log.error("[FileUtil][saveTempFile]", ex);
-            return null;
-        }
-        return tempFile;
-    }
-
-    public static File saveTempFile(@NonNull String namePrefix, @NonNull String nameSuffix) {
-        File tempFile;
-        try {
-            tempFile = File.createTempFile(namePrefix, nameSuffix);
-        } catch (Exception ex) {
-            log.error("[FileUtil][saveTempFile]", ex);
-            return null;
-        }
-        return tempFile;
-    }
-
-    public static String genImageName(File file) {
-        return IdUtil.timeDiy("image") + getImageFileSize(file) + getFileNameSuffix(file);
-    }
-
-    /**
-     * 获取上传图片的宽高
-     *
-     * @return 格式：_width_height
-     */
-    public static String getImageFileSize(File file) {
-        String sizeStr = "";
-        try {
-            BufferedImage buff = ImageIO.read(file);
-            int width = buff.getWidth();
-            int height = buff.getHeight();
-            sizeStr += "_" + width + "_" + height;
-        } catch (IOException ex) {
-            log.error("[FileUtil][getImageFileSize]", ex);
-        }
-        return sizeStr;
-    }
-
-    public static String getFileNameSuffix(File file) {
-        if (file == null) {
-            return "";
-        }
-        return getFileNameSuffix(file.getName());
-    }
-
-    public static String getFileNamePrefix(File file) {
-        if (file == null) {
-            return "";
-        }
-        return getFileNamePrefix(file.getName());
-    }
-
-    public static String getFileNameSuffix(String fileName) {
-        if (fileName == null) {
-            return "";
-        }
-        return fileName.substring(fileName.lastIndexOf("."));
-    }
-
-    public static String getFileNamePrefix(String fileName) {
-        if (fileName == null) {
-            return "";
-        }
-        return fileName.substring(0, fileName.lastIndexOf("."));
-    }
 
     public static byte[] getBytes(@NonNull InputStream inputStream) {
         try {
@@ -106,9 +25,53 @@ public class FileUtil {
             inputStream.close();
             return outStream.toByteArray();
         } catch (Exception ex) {
-            log.error("[FileUtil][getBytes]", ex);
-            return null;
+            throw UnifiedException.gen("获取 bytes 失败", ex);
         }
+    }
+
+    public static File saveTempFile(@NonNull byte[] contents, @NonNull String namePrefix, @NonNull String nameSuffix) {
+        File tempFile;
+        try {
+            tempFile = File.createTempFile(namePrefix, nameSuffix);
+            OutputStream out = new FileOutputStream(tempFile);
+            out.write(contents);
+            out.flush();
+            out.close();
+        } catch (Exception ex) {
+            throw UnifiedException.gen("往临时目录文件写字节失败", ex);
+        }
+        return tempFile;
+    }
+
+
+    public static File saveTempFile(InputStream inputStream, @NonNull String namePrefix, @NonNull String nameSuffix) {
+        return saveTempFile(getBytes(inputStream), namePrefix, nameSuffix);
+    }
+
+    public static File saveTempFile(@NonNull String namePrefix, @NonNull String nameSuffix) {
+        File tempFile;
+        try {
+            tempFile = File.createTempFile(namePrefix, nameSuffix);
+        } catch (Exception ex) {
+            throw UnifiedException.gen("往临时目录生成文件失败", ex);
+        }
+        return tempFile;
+    }
+
+    public static String getFileNamePrefix(File file) {
+        if (file == null) {
+            return "";
+        }
+        String fileName = file.getName();
+        return fileName.substring(0, fileName.lastIndexOf("."));
+    }
+
+    public static String getFileNameSuffix(File file) {
+        if (file == null) {
+            return "";
+        }
+        String fileName = file.getName();
+        return fileName.substring(fileName.lastIndexOf("."));
     }
 
 }

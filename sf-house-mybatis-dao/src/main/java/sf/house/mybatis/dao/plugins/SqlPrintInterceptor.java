@@ -93,7 +93,7 @@ public class SqlPrintInterceptor implements Interceptor {
         if (obj instanceof String) {
             value = "'" + obj.toString() + "'";
         } else if (obj instanceof Date) {
-            value = "'" + DateUtil.formatByDateTimeFormatter((Date) obj) + "'";
+            value = "'" + DateUtil.format((Date) obj, "yyyy-MM-dd HH:mm:ss") + "'";
         } else {
             if (obj != null) {
                 value = obj.toString();

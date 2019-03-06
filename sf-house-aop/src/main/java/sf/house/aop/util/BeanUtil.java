@@ -4,6 +4,7 @@ import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import sf.house.bean.excps.UnifiedException;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -49,7 +50,7 @@ public class BeanUtil {
         try {
             temp = target.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("没有默认构造方法", e);
+            throw UnifiedException.gen("没有默认构造方法", e);
         }
         return temp;
     }
@@ -62,12 +63,12 @@ public class BeanUtil {
         try {
             temp = target.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("没有默认构造方法", e);
+            throw UnifiedException.gen("没有默认构造方法", e);
         }
         try {
             BeanUtils.copyProperties(source, temp, getNullPropertyNames(source));
         } catch (Exception e) {
-            throw new RuntimeException("copyProperties出错了", e);
+            throw UnifiedException.gen("copyProperties出错了", e);
         }
         return temp;
     }
@@ -103,16 +104,17 @@ public class BeanUtil {
         try {
             obj = beanClass.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("没有默认构造方法", e);
+            throw UnifiedException.gen("没有默认构造方法", e);
         }
         try {
             org.apache.commons.beanutils.BeanUtils.populate(obj, map);
         } catch (Exception e) {
-            throw new RuntimeException("populate出错了", e);
+            throw UnifiedException.gen("populate出错了", e);
         }
         return obj;
     }
 
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> obj2Map(Object source) {
         if (source == null)
             return null;

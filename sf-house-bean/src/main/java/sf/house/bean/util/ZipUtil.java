@@ -18,6 +18,7 @@ import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public class ZipUtil {
+
     @Data
     @Builder
     public static class ZipModel {
@@ -30,7 +31,7 @@ public class ZipUtil {
         }
 
         public String getPrefixPath() {
-            return PathUtil.addSeparator(prefixPath);
+            return PathUtil.tailEndSeparator(prefixPath);
         }
     }
 

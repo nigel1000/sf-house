@@ -1,7 +1,5 @@
 package sf.house.bean.util;
 
-import lombok.NonNull;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -13,36 +11,40 @@ import java.util.regex.Pattern;
 
 public class PathUtil {
 
-    private static final Pattern PATH_SPECIAL_URI = Pattern.compile(".*[<>&\"].*");
-    private static final Pattern FILE_SPECIAL_URI = Pattern.compile(".*[/\\\\].*");
-
-
-    public static boolean hasPathSpecial(@NonNull String path) {
+    public static boolean hasPathSpecial(String path) {
         if (path == null || "".equals(path.trim())) {
             return true;
-        } else if (path.contains(File.separator + '.') || path.contains('.' + File.separator) || path.startsWith(".")
-                || path.endsWith(".") || PATH_SPECIAL_URI.matcher(path).matches()) {
-            return true;
-        } else if (path.contains("..")) {
+        }
+        if (path.contains("..") ||
+                path.contains(File.separator + '.') ||
+                path.contains('.' + File.separator) ||
+                path.startsWith(".") ||
+                path.endsWith(".") ||
+                Pattern.compile(".*[<>&\"].*").matcher(path).matches()) {
             return true;
         }
         return false;
     }
 
-    public static boolean hasFileSpecial(@NonNull String fileName) {
+    public static boolean hasFileSpecial(String fileName) {
         if (hasPathSpecial(fileName)) {
             return true;
-        } else if (FILE_SPECIAL_URI.matcher(fileName).matches()) {
+        }
+        if (Pattern.compile(".*[/\\\\].*").matcher(fileName).matches()) {
             return true;
         }
         return false;
     }
 
-    public static String addSeparator(@NonNull String path) {
+    public static String tailEndSeparator(String path) {
         return correctSeparator(path + File.separator);
     }
 
-    public static String correctSeparator(@NonNull String path) {
+    // 多个/或者多个\缩减为一个
+    public static String correctSeparator(String path) {
+        if (path == null || "".equals(path.trim())) {
+            return "";
+        }
         List<Character> separator = Arrays.asList('\\', '/');
         StringBuilder ret = new StringBuilder();
         Character preStr = null;

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import sf.house.bean.beans.Response;
-import sf.house.bean.util.ResponseUtil;
+import sf.house.bean.beans.ResponseUtil;
 import sf.house.project.api.TraceIdService;
 
 import javax.annotation.Resource;

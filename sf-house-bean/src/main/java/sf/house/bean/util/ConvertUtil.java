@@ -1,6 +1,5 @@
 package sf.house.bean.util;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.beans.BeanInfo;

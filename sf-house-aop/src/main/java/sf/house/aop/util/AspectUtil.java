@@ -6,7 +6,6 @@ import org.apache.commons.collections.MapUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import sf.house.bean.functions.SupplierThrow;
 import sf.house.bean.util.TypeUtil;
 
 import java.lang.annotation.Annotation;
@@ -14,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Created by hznijianfeng on 2018/8/14.
@@ -116,8 +116,8 @@ public class AspectUtil {
         return resultMap.get(key);
     }
 
-    public static <E extends Throwable> Object setProceedResult(SupplierThrow<Object, E> supplier,
-                                                                final ProceedingJoinPoint point) throws E {
+    public static Object setProceedResult(Supplier<Object> supplier,
+                                          final ProceedingJoinPoint point) {
         String key = point.toString();
         Object result = supplier.get();
         Map<String, Object> resultMap = Optional.ofNullable(joinPointResultMap.get()).orElse(Maps.newHashMap());
@@ -143,6 +143,7 @@ public class AspectUtil {
             hasJoinPointResultMap.remove();
         }
     }
+
     ///////////////////////////////////////////////
 
     /**

@@ -28,12 +28,13 @@ public class ValidUtil {
     // 111.22
     // 102,112,222
     // 102,112,222.121123
-    public static boolean isAmout(String number) {
+    public static boolean isAmount(String number) {
         return match(number, "^([0]{1})|([1-9]{1}([0-9]*|[0-9]{0,2}(,[0-9]{3})*)([.]{1}[0-9]+)?)$");
     }
 
     public static boolean match(String str, String regexp) {
-        if (str == null || "".equals(str.trim())) {
+        if (str == null || "".equals(str.trim()) ||
+                regexp == null || "".equals(regexp.trim())) {
             return false;
         }
         return Pattern.matches(regexp, str);

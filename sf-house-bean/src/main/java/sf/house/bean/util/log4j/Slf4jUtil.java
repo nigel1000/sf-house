@@ -1,12 +1,9 @@
-package sf.house.bean.util;
+package sf.house.bean.util.log4j;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.impl.StaticLoggerBinder;
 import sf.house.bean.excps.UnifiedException;
-import sf.house.bean.util.log4j.Log4j12Util;
-import sf.house.bean.util.log4j.Log4j2Util;
-import sf.house.bean.util.log4j.LogbackUtil;
-import sf.house.bean.util.log4j.SimpleUtil;
+import sf.house.bean.util.FunctionUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -97,7 +97,7 @@ public class MybatisParam implements Serializable {
             this.setAuthor("linus");
         }
         if (StringUtils.isEmpty(current_date)) {
-            this.setCurrent_date(DateUtil.formatByDateTimeFormatter(new Date()));
+            this.setCurrent_date(DateUtil.format(DateUtil.now(), "yyyy-MM-dd HH:mm:ss"));
         }
 
         if (StringUtils.isEmpty(gen_domain)) {

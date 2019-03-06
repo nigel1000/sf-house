@@ -1,14 +1,12 @@
 package sf.house.bean.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.core.util.Throwables;
 import sf.house.bean.util.trace.TraceIdUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
 /**
  * Created by hznijianfeng on 2018/8/15.
@@ -43,9 +41,7 @@ public class ThreadPoolUtil {
                 SecurityManager s = System.getSecurityManager();
                 group = (s != null) ? s.getThreadGroup() :
                         Thread.currentThread().getThreadGroup();
-                namePrefix = "pool-" +
-                        poolNumber.getAndIncrement() +
-                        "-thread-";
+                namePrefix = "pool-" + poolNumber.getAndIncrement() + "-thread-";
             }
 
             public Thread newThread(Runnable r) {
@@ -83,25 +79,6 @@ public class ThreadPoolUtil {
 
     public static <T> Future<T> submit(Callable<T> command) {
         return SingletonInstance.INSTANCE.executorService.submit(TraceIdUtil.wrap(command));
-    }
-
-    public static <T> T get(Future<T> future, int milliSecond, Supplier<T> supplier) {
-        try {
-            return future.get(milliSecond, TimeUnit.MILLISECONDS);
-        } catch (Exception ex) {
-            log.error("[ThreadPoolUtil getWithTimeout failed]", ex);
-        }
-        return supplier.get();
-
-    }
-
-    public static <T> T get(Future<T> future, Supplier<T> supplier) {
-        try {
-            return future.get();
-        } catch (Exception ex) {
-            log.error("[ThreadPoolUtil get failed]", ex);
-        }
-        return supplier.get();
     }
 
 }

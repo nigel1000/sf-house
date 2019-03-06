@@ -15,7 +15,7 @@ import sf.house.redis.test.demo.*;
 @Slf4j
 public class RedisApp {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 
         log.info("################### testGetSetWithExpire ###########################");
@@ -35,6 +35,9 @@ public class RedisApp {
 
         log.info("################### testReleaseLock ###########################");
         testReleaseLock(applicationContext);
+
+        Thread.sleep(10000);
+        System.exit(0);
 
     }
 

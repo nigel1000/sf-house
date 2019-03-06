@@ -3,7 +3,7 @@ package sf.house.project.web.param;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import sf.house.aop.util.JsonUtil;
-import sf.house.aop.util.SplitUtil;
+import sf.house.bean.util.SplitUtil;
 import sf.house.bean.excps.UnifiedException;
 
 import java.io.Serializable;
@@ -39,8 +39,7 @@ public class DubboGenericParam implements Serializable {
             throw UnifiedException.gen("方法名 不能为空");
         }
         if (StringUtils.isNotEmpty(methodParamType)) {
-            List<String> list = SplitUtil.splitByComma(this.getMethodParamType());
-            this.methodParamTypes = list.toArray(new String[list.size()]);
+            this.methodParamTypes = SplitUtil.split2Array(this.getMethodParamType(), ",");
         }
         if (StringUtils.isNotEmpty(methodParamValue)) {
             this.methodParamValues = JsonUtil.json2bean(this.getMethodParamValue(), List.class).toArray();

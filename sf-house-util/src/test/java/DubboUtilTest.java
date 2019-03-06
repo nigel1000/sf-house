@@ -2,7 +2,7 @@ import com.alibaba.dubbo.rpc.service.GenericService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import sf.house.aop.util.JsonUtil;
-import sf.house.aop.util.SplitUtil;
+import sf.house.bean.util.SplitUtil;
 import sf.house.util.dubbo.DubboUtil;
 
 import java.util.List;
@@ -28,8 +28,7 @@ public class DubboUtilTest {
         String[] methodParamTypes = null;
         Object[] methodParamValues = null;
         if (StringUtils.isNotEmpty(methodParamType)) {
-            List<String> list = SplitUtil.splitByComma(methodParamType);
-            methodParamTypes = list.toArray(new String[list.size()]);
+            methodParamTypes = SplitUtil.split2Array(methodParamType, ",");
         }
         if (StringUtils.isNotEmpty(methodParamValue)) {
             methodParamValues = JsonUtil.json2bean(methodParamValue, List.class).toArray();

@@ -2,7 +2,7 @@ package sf.house.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import sf.house.bean.util.IdUtil;
-import sf.house.bean.util.Slf4jUtil;
+import sf.house.bean.util.log4j.Slf4jUtil;
 
 /**
  * Created by hznijianfeng on 2018/10/29.

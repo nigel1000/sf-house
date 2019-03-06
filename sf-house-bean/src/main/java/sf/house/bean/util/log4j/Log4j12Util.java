@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by nijianfeng on 2018/11/9.
  */
-public class Log4j12Util {
+class Log4j12Util {
 
     public static void fillLoggerInfo(Map<String, Object> loggerMap, Map<String, String> loggerLevelMap) {
         Enumeration enumeration = org.apache.log4j.LogManager.getCurrentLoggers();

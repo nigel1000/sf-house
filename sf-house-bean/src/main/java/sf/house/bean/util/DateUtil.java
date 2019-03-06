@@ -1,5 +1,8 @@
 package sf.house.bean.util;
 
+import lombok.NonNull;
+import sf.house.bean.excps.UnifiedException;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -10,104 +13,64 @@ import java.util.Date;
 
 public class DateUtil {
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private DateUtil() {
+    }
 
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-    private static final DateTimeFormatter chinaDateFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
-
-    private static final DateTimeFormatter chinaSimpleDateFormatter = DateTimeFormatter.ofPattern("MM月dd日");
-
-    private DateUtil() {}
-
-    // Wed Jan 31 15:11:43 CST 2018
-    public static Date getCurrentDate() {
+    public static Date now() {
         return new Date();
     }
 
-    // Wed Jan 31 00:00:00 CST 2018
-    public static Date toDate(LocalDate localDate) {
-        if (localDate == null)
-            return null;
-        Instant instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(instant);
+    // 字符串与date的转换
+    // data   2018-11-12 11:20:21
+    // format yyyy-MM-dd HH:mm:ss
+    public static Date parseDate(@NonNull String data, @NonNull String format) {
+        return toDate(LocalDateTime.parse(data, DateTimeFormatter.ofPattern(format)));
     }
 
-    // Wed Jan 31 15:11:43 CST 2018
-    public static Date toDate(LocalDateTime localDateTime) {
-
-        if (localDateTime == null)
-            return null;
-        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(instant);
+    //yyyy-MM-dd
+    //yyyy-MM-dd HH:mm:ss
+    //yyyy-MM-dd HH:mm:ss.SSS
+    //yyyy年MM月dd日
+    public static String format(@NonNull Date date, @NonNull String format) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return DateTimeFormatter.ofPattern(format).format(localDateTime);
     }
 
-    public static Date parseDateTime(String dateTime) {
-        return toDate(LocalDateTime.parse(dateTime, dateTimeFormatter));
-    }
-
-    public static Date parseDate(String date) {
-        return toDate(LocalDate.parse(date, dateFormatter));
-    }
-
-
-    // 2018-01-31
-    public static LocalDate toLocalDate(Date date) {
-        if (date == null)
-            return null;
-        Instant instant = date.toInstant();
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    // 2018-01-31T15:11:43.592
-    public static LocalDateTime toLocalDateTime(Date date) {
-
-        if (date == null)
-            return null;
-        Instant instant = date.toInstant();
-        return instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
+    // 获取时间信息
     // 2018-01-31T00:00
-    public static LocalDateTime getStartOfDay(Date date) {
-
-        if (date == null)
-            return null;
+    public static Date getStartOfDay(@NonNull Date date) {
         LocalDate localDate = toLocalDate(date);
-        return localDate.atStartOfDay();
+        return toDate(localDate.atStartOfDay());
     }
 
     // 2018-01-31T23:59:59.999999999
-    public static LocalDateTime getEndOfDay(Date date) {
-
-        if (date == null)
-            return null;
+    public static Date getEndOfDay(@NonNull Date date) {
         LocalDate localDate = toLocalDate(date);
-        return LocalDateTime.of(localDate, LocalTime.MAX);
+        return toDate(LocalDateTime.of(localDate, LocalTime.MAX));
     }
 
-    // 2018-01-31 15:11:43
-    public static String formatByDateTimeFormatter(Date date) {
-        return format(date, dateTimeFormatter);
+    public static int getYear(@NonNull Date date) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return localDateTime.getYear();
     }
 
-    // 2018-01-31
-    public static String formatByDateFormatter(Date date) {
-        return format(date, dateFormatter);
+    public static int getMonthValue(@NonNull Date date) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return localDateTime.getMonthValue();
     }
 
-    // 2018年01月31日
-    public static String formatByChinaDateFormatter(Date date) {
-        return format(date, chinaDateFormatter);
+    public static int getDayOfMonth(@NonNull Date date) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return localDateTime.getDayOfMonth();
     }
 
-    // 01月31日
-    public static String formatByChinaSimpleDateFormatter(Date date) {
-        return format(date, chinaSimpleDateFormatter);
+    public static int getDayOfYear(@NonNull Date date) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return localDateTime.getDayOfYear();
     }
 
-    public static String getDayOfWeek(LocalDate date) {
-        switch (date.getDayOfWeek()) {
+    public static String getDayOfWeek(@NonNull Date date) {
+        switch (toLocalDate(date).getDayOfWeek()) {
             case MONDAY:
                 return "一";
             case TUESDAY:
@@ -122,15 +85,69 @@ public class DateUtil {
                 return "六";
             case SUNDAY:
                 return "日";
+            default:
+                throw UnifiedException.gen("数据异常");
         }
-        return "";
     }
 
-    private static String format(Date date, DateTimeFormatter formatter) {
-        if (date == null)
-            return "";
+    // 增减时间
+    public static Date plusDays(@NonNull Date date, long days) {
         LocalDateTime localDateTime = toLocalDateTime(date);
-        return formatter.format(localDateTime);
+        return toDate(localDateTime.plusDays(days));
+    }
+
+    public static Date plusMonths(@NonNull Date date, long months) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return toDate(localDateTime.plusMonths(months));
+    }
+
+    public static Date plusYears(@NonNull Date date, long years) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return toDate(localDateTime.plusYears(years));
+    }
+
+    public static Date minusDays(@NonNull Date date, long days) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return toDate(localDateTime.minusDays(days));
+    }
+
+    public static Date minusMonths(@NonNull Date date, long months) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return toDate(localDateTime.minusMonths(months));
+    }
+
+    public static Date minusYears(@NonNull Date date, long years) {
+        LocalDateTime localDateTime = toLocalDateTime(date);
+        return toDate(localDateTime.minusYears(years));
+    }
+
+    // jdk 新旧版本转换
+    public static LocalDate toLocalDate(Date date) {
+        if (date == null)
+            return null;
+        Instant instant = date.toInstant();
+        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public static LocalDateTime toLocalDateTime(Date date) {
+        if (date == null)
+            return null;
+        Instant instant = date.toInstant();
+        return instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public static Date toDate(LocalDate localDate) {
+        if (localDate == null)
+            return null;
+        Instant instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
+    public static Date toDate(LocalDateTime localDateTime) {
+        if (localDateTime == null)
+            return null;
+        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
     }
 
 }

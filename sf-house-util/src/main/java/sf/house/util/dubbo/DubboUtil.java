@@ -12,7 +12,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.commons.lang3.StringUtils;
-import sf.house.aop.util.SplitUtil;
+import sf.house.bean.util.SplitUtil;
 import sf.house.bean.excps.UnifiedException;
 import sf.house.util.telnet.TelnetUtil;
 
@@ -84,7 +84,7 @@ public class DubboUtil {
             if (!version.equals(result.getParameter("version"))) {
                 continue;
             }
-            if (!SplitUtil.splitByComma(result.getParameter("methods")).contains(methodName)) {
+            if (!SplitUtil.split2StringByComma(result.getParameter("methods")).contains(methodName)) {
                 throw UnifiedException.gen(" 此服务接口没有此方法 ");
             }
             return result;
